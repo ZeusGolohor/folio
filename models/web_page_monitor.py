@@ -15,6 +15,7 @@ class WebPageMonitor(BaseModel):
     """
     sports = {}
     selected_sports = {}
+    url = 'https://www.livescores.com'
 
 
     def __init__(self, *args, **kwargs):
@@ -52,7 +53,11 @@ class WebPageMonitor(BaseModel):
                             break
                         name = child.text
                         link = child.get('href')
-                        self.sports[i] = {'name': name, 'link': link}
+                        if (name == 'Football'):
+                            main_link = link[:-6] + 'footbal/live/'
+                        else:
+                            main_link = link[:-6] + 'live/'
+                        self.sports[i] = {'name': name, 'link': main_link}
                         i += 1
                 return (self.sports)
             elif (kwargs['online'] == 'True'):
@@ -67,6 +72,10 @@ class WebPageMonitor(BaseModel):
                             break
                         name = child.text
                         link = child.get('href')
+                        if (link == '/'):
+                            link = '{}{}football/live'.format(self.url, link)
+                        else:
+                            link = '{}{}live'.format(self.url, link)
                         self.sports[i] = {'name': name, 'link': link}
                         i += 1
                     return self.sports
@@ -97,10 +106,46 @@ class WebPageMonitor(BaseModel):
                 self.selected_sports[number] = sport_list.get(number)
                 return ({number: sport_list.get(number)})
         except Exception as e:
-            # print(e)
+            print(e)
             return (None)
-        
 
+    def select_all_available_sports(self, **kwargs):
+        """
+        A method used to select all available sports
+        """
+        if (not self.sports):
+            self.set_dict_of_sports(**kwargs)
+        sport_list = self.list_of_sports()
+        if (sport_list == None):
+            return (None)
+        elif(sport_list):
+            for key, value in sport_list.items():
+                sport = sport_list.get(int(key))
+                if (sport is None):
+                    return (None)
+                elif (sport):
+                    self.selected_sports[int(key)] = sport
+                else:
+                    return (None)
+            return (self.selected_sports)
+        else:
+            return (None)
+
+    def select_all_available_sports2(self, **args):
+        """
+        A method used to select all available sports
+        """
+        print(args)
+        if (args['online'] == 'False'):
+            with open(args['file2'], 'r')as fp:
+                args = {'fp': fp}
+                monitor = self.init_BeautifulSoup(**args)
+                print(monitor)
+        elif (args['online'] == 'True'):
+            for key, value in self.sports.items():
+                print("{}: {}".format(key, value))
+        
+    
     def get_selected_sports(self):
         """
         A method used to return selected sports
@@ -136,12 +181,36 @@ class WebPageMonitor(BaseModel):
             return (True)
         return (False)
     
-    def all_lt(self, arg):
+    def get_live_games(self, kwargs):
+        """
+        Used to get live games of user selected sports
+        """
+        if (kwargs['online'] == 'False'):
+            for key, value in self.selected_sports.items():
+                if (int(key) == 1):
+                    with open(kwargs.get('file'), 'r') as fp:
+                        args = {'fp': fp}
+                        monitor = self.init_BeautifulSoup(**args)
+                        cen_content = monitor.find('div',  class_='ea', id='content-center')
+                        live_games = cen_content.find('div', class_="na")
+                        lt = live_games.find_all('div', class_='lb')
+                        print(lt)
+                else:
+                    continue
+
+
+        elif (kwargs['online'] == 'True'):
+            print('online')
+        else:
+            return (None)
+
+    
+    def all_lt(self, **kwargs):
         """
         A method used to get all live games leagues and tournaments
         """
-        self.selected_sports = {}
         if (len(self.selected_sports) == 0):
             return (None)
         else:
-            pass 
+            kwargs['selected_sports'] = self.selected_sports
+            self.get_live_games(kwargs)

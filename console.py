@@ -25,12 +25,14 @@ class GUZECommand(cmd.Cmd):
     prompt = '(Guze) '
     sports = {}
     selected_sports = {}
-    online = environ.get('ONLINE', 'True')
+    online = environ.get('ONLINE', 'False')
     url = 'https://www.livescores.com/'
-    file1 = "./livescores/LiveScore_Football_Premier_League_Live_Football_Scores_Egypt.html"
+    file1 = "./livescores/live_football.html"
+    file2 = "./livescores/live_football_usa_mls.html"
     instance = WebPageMonitor()
     args = {
             'file': file1,
+            'file2': file2,
             'online': online,
             'url': url
         }
@@ -129,7 +131,18 @@ class GUZECommand(cmd.Cmd):
                 print(tabulate(table, headers, tablefmt='grid'))     
         else:
             print("Select a sport via it's number:")
-            self.do_list_of_sports(arg) 
+            self.do_list_of_sports(arg)
+    
+    def do_select_all_available_sports(self, arg):
+        """
+        A method used to select all available sports
+        """
+        result = self.instance.select_all_available_sports(**self.args)
+        if (result == None):
+            print("There was an error selecting all sports, try again.")
+        else:
+            print("You have successfully selected all available sports for monitoring.")
+            self.do_all_monitored_sports(arg)
 
 
     def do_all_monitored_sports(self, arg):
@@ -195,7 +208,7 @@ class GUZECommand(cmd.Cmd):
         """
         A method used to get all live games leagues and tournaments
         """
-        result = self.instance.all_lt(arg)
+        result = self.instance.all_lt(**self.args)
         if (result == None):
             print("An error occured. Make sure you already selected sport(s) to monitor")
             self.do_all_monitored_sports(arg)
