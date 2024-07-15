@@ -9,6 +9,7 @@ import config
 from models.web_page_monitor import WebPageMonitor
 import requests
 from os import environ
+from tabulate import tabulate
 
 
 if config.SHOW_MESSAGE:
@@ -24,7 +25,7 @@ class GUZECommand(cmd.Cmd):
     prompt = '(Guze) '
     sports = {}
     selected_sports = {}
-    online = environ.get('ONLINE', 'False')
+    online = environ.get('ONLINE', 'True')
     url = 'https://www.livescores.com/'
     file1 = "./livescores/LiveScore_Football_Premier_League_Live_Football_Scores_Egypt.html"
     instance = WebPageMonitor()
@@ -100,9 +101,16 @@ class GUZECommand(cmd.Cmd):
         """
         sports = self.set_dict_of_sports()
         if (sports):
+            print('To select a sport use the command below')
             print("Usage: select_sport <sport_number>")
+            headers = ['Number', 'Sport']
+            table = []
             for key, value in sports.items():
-                print("{}: {}".format(key, value['name']))
+                new_sport = []
+                new_sport.append(key)
+                new_sport.append(value['name'])
+                table.append(new_sport)
+            print(tabulate(table, headers, tablefmt='grid'))
 
     def do_select_sport(self, arg):
         """
@@ -115,8 +123,10 @@ class GUZECommand(cmd.Cmd):
                 print("Select a sport via it's number:")
                 self.do_list_of_sports(arg)
             else:
-                print("You have successfully selected: \n{}: {}".format(arg, result[int(arg)]['name']))
-
+                headers = ['Number', 'Sport']
+                table = [['{}'.format(arg), '{}'.format(result[int(arg)]['name'])]]
+                print('You have selected:')
+                print(tabulate(table, headers, tablefmt='grid'))     
         else:
             print("Select a sport via it's number:")
             self.do_list_of_sports(arg) 
@@ -130,9 +140,16 @@ class GUZECommand(cmd.Cmd):
         if (len(selected_sports) <= 0):
             print("No sports selected run 'list_of_sports' to get the list of available sports to monitor")
         else:
-            print("list of all monitored sports")
+            print("List of all monitored sports:")
+            headers = ['Number', 'Sport']
+            table = []
             for key, value in selected_sports.items():
-                print("{}: {}".format(key, value['name']))
+                new_sport = []
+                new_sport.append(key)
+                new_sport.append(value['name'])
+                table.append(new_sport)
+            print(tabulate(table, headers, tablefmt='grid'))
+              
 
     def do_delete_monitored_sport(self, arg):
         """
@@ -146,23 +163,31 @@ class GUZECommand(cmd.Cmd):
             if (arg):
                 result = self.instance.delete_monitored_sport(arg)
                 if (result):
-                    print("You have successfully deleted '{}: {}' from monitored sports".format(arg, result))
+                    print('From monitored sports, you have deleted:')
+                    headers = ['Number', 'Sport']
+                    table = []
+                    new_sport = []
+                    new_sport.append(arg)
+                    new_sport.append(result)
+                    table.append(new_sport)
+                    print(tabulate(table, headers, tablefmt='grid'))
                 else:
+                    print('***{} is not a valid sport number you are monitoring***'.format(arg))
                     print("You need to passed the sport number to be deleted")
-                    print("Usage: delete_sport <sport_number>")
+                    print("Usage: delete_monitored_sport <sport_number>")
                     self.do_all_monitored_sports(arg)
             else:
                 print("You need to passed the sport number to be deleted")
                 print("Usage: delete_sport <sport_number>")
                 self.do_all_monitored_sports(arg)
 
-    def do_delete_all_monitored_sport(self, arg):
+    def do_delete_all_monitored_sports(self, arg):
         """
         A method used to delete all monitored sports.
         """
-        result = self.instance.delete_all_monitored_sport(arg)
+        result = self.instance.delete_all_monitored_sports(arg)
         if (result == True):
-            print("All monitored sport have been deleted")
+            print("All monitored sports have been deleted")
         else:
             print("An Error occured, please try again.")
 

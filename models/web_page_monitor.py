@@ -57,7 +57,7 @@ class WebPageMonitor(BaseModel):
                 return (self.sports)
             elif (kwargs['online'] == 'True'):
                 try:
-                    response = requests.get(self.url)
+                    response = requests.get(kwargs['url'])
                     file = {'fp': response.content}
                     monitor = self.init_BeautifulSoup(**file)
                     header = monitor.find('header', class_='Nd')
@@ -127,7 +127,7 @@ class WebPageMonitor(BaseModel):
         else:
             return (None)
         
-    def delete_all_monitored_sport(self, arg):
+    def delete_all_monitored_sports(self, arg):
         """
         A method used to delete all monitored sports.
         """
@@ -144,4 +144,4 @@ class WebPageMonitor(BaseModel):
         if (len(self.selected_sports) == 0):
             return (None)
         else:
-            
+            pass 
