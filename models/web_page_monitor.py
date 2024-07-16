@@ -16,6 +16,7 @@ class WebPageMonitor(BaseModel):
     sports = {}
     selected_sports = {}
     url = 'https://www.livescores.com'
+    lt = {}
 
 
     def __init__(self, *args, **kwargs):
@@ -188,17 +189,61 @@ class WebPageMonitor(BaseModel):
         if (kwargs['online'] == 'False'):
             for key, value in self.selected_sports.items():
                 if (int(key) == 1):
+                    lt_details = {}
                     with open(kwargs.get('file'), 'r') as fp:
                         args = {'fp': fp}
                         monitor = self.init_BeautifulSoup(**args)
+                        header = monitor.find('header', class_='Nd')
+                        active = header.find('a', class_='isActive')
+                        active = active.find('span', class_='Pd')
+                        active = active.text
                         cen_content = monitor.find('div',  class_='ea', id='content-center')
                         live_games = cen_content.find('div', class_="na")
                         lt = live_games.find_all('div', class_='lb')
-                        print(lt)
+                        for div in lt:
+                            print(div)
+                            spans = div.find_all('span')
+                            print(spans)
+                                    
+                            for sib in div.next_siblings:
+                                if sib.get('class')[0] == 'lb':
+                                    # new lt
+                                    break
+                                else:
+                                    # new live match
+                                    print(sib.get('class')[0])
+
+
+
+                        # index = 1
+                        # name = ''
+                        # name_link = ''
+                        # for div in lt:
+                        #     spans = div.find_all('span')
+                        #     for span in spans:
+                        #         search = span.find_all('a', class_='ed')
+                        #         if search:
+                        #             lt_details[index] = {}
+                        #             for a in search:
+                        #                 for child in a.children:
+                        #                     cls = child.get('class')[0]
+                        #                     if (cls == 'ob'):
+                        #                         name = child.text
+                        #                         name_link = child.parent.get('href')
+                        #                     if (cls == 'pb'):
+                        #                         lt_details[index]['event'] = child.text
+                        #                         lt_details[index]['event_link'] = child.parent.get('href')
+                        #         else:
+                        #             cls = span.get('class')[0]
+                        #             if (cls == 'mb'):
+                        #                 date = span.text
+                        #                 lt_details[index]['date'] = date
+                        #     lt_details[index]['name'] = name    
+                        #     lt_details[index]['name_link'] = name_link
+                        #     index += 1
+                    self.lt[active] = lt_details
                 else:
                     continue
-
-
         elif (kwargs['online'] == 'True'):
             print('online')
         else:
@@ -214,3 +259,4 @@ class WebPageMonitor(BaseModel):
         else:
             kwargs['selected_sports'] = self.selected_sports
             self.get_live_games(kwargs)
+            return (self.lt)

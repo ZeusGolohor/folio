@@ -88,10 +88,10 @@ class GUZECommand(cmd.Cmd):
         results = self.instance.set_dict_of_sports(**self.args)
         if (results == None):
             if (self.args['online'] == 'True'):
-                print("An error occured while trying to visit the internet, ")
+                print("An error occurred while trying to visit the internet, ")
                 print("please check you internet connection")
             else:
-                print("An unknown error occured, check arguments passed to the software, or the offline file being parsed")
+                print("An unknown error occurred, check arguments passed to the software, or the offline file being parsed")
         else:
             return (results)
 
@@ -202,7 +202,7 @@ class GUZECommand(cmd.Cmd):
         if (result == True):
             print("All monitored sports have been deleted")
         else:
-            print("An Error occured, please try again.")
+            print("An Error occurred, please try again.")
 
     def do_all_lt(self, arg):
         """
@@ -210,11 +210,73 @@ class GUZECommand(cmd.Cmd):
         """
         result = self.instance.all_lt(**self.args)
         if (result == None):
-            print("An error occured. Make sure you already selected sport(s) to monitor")
+            print("An error occurred. Make sure you already selected sport(s) to monitor")
             self.do_all_monitored_sports(arg)
         else:
-            print(result)
+            monitored_sports = self.instance.all_monitored_sports()
+            for key, value in monitored_sports.items():
+                headers = ['Number', 'Sport']
+                table = []
+                new_sport = []
+                new_sport.append(key)
+                new_sport.append(value["name"])
+                table.append(new_sport)
+                print(tabulate(table, headers, tablefmt='grid'))
+                lt = result.get(value["name"])
+                if (lt):
+                    headers = ['Number', 'League or Tornament', 'Sport', 'Date']
+                    table2 = []
+                    for key, value1 in lt.items():
+                        new_lt = []
+                        new_lt.append(key)
+                        lte = value1['name'] + ' - ' + value1['event']
+                        new_lt.append(lte)
+                        new_lt.append(value['name'])
+                        new_lt.append(value1['date'])
+                        table2.append(new_lt)
+                    print(tabulate(table2, headers, tablefmt='grid'))
+                else:
+                    headers = ['Number', 'League or Tornament', 'Sport', 'Date']
+                    table2 = []
+                    new_lt = []
+                    new_lt.append("NO LIVE")
+                    new_lt.append("SPORT")
+                    new_lt.append("TODAY FOR")
+                    new_lt.append(value['name'])
+                    table2.append(new_lt)
+                    print(tabulate(table2, headers, tablefmt='grid'))
+                print()
+                print()
+            print("To add a league or tournament to live stream run the command below:")
+            print("Usage: add_lt <sport_number> <league or tournament number>")
 
+    def do_add_lt(self, arg):
+        """
+        A method used to add live leagues or tournaments.
+        """
+        monitored_sports = self.instance.all_monitored_sports()
+        if (monitored_sports):
+            args = arg.split(' ')
+            try:
+                number = int(args[0])
+                key = monitored_sports.get(number)
+                if (key):
+                    if (len(args) < 2):
+                        print("An error occurred")
+                        print("You need to pass the league or tournament number")
+                        print('Usage: add_lt <sport number> <league or tournament number(s)')
+                    else:
+                        print(key)
+                else:
+                    print("***'{}' not part of your list of monitored sports".format(number))
+                    self.do_all_monitored_sports(arg)
+            except Exception as e:
+                # print(e)
+                print("An error occurred")
+                print("***'{}' is not a valid entry, try again***".format(args[0]))
+        else:
+            print("An error occurred. Make sure you already selected sport(s) to monitor")
+            self.do_all_monitored_sports(arg)
 
 if __name__ == "__main__":
     GUZECommand().cmdloop()
