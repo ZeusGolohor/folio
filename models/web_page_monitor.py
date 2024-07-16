@@ -203,7 +203,7 @@ class WebPageMonitor(BaseModel):
                         for div in lt:
                             print(div)
                             spans = div.find_all('span')
-                            print(spans)
+                            print(spans[1])
                                     
                             for sib in div.next_siblings:
                                 if sib.get('class')[0] == 'lb':
