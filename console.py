@@ -17,26 +17,20 @@ if config.SHOW_MESSAGE:
     config.SHOW_MESSAGE = False  # Only show once
 
 
-
 class GUZECommand(cmd.Cmd):
     """
     A class use to handle the application console.
     """
-    prompt = '(Guze) '
+
+    prompt = "(Guze) "
     sports = {}
     selected_sports = {}
-    online = environ.get('ONLINE', 'False')
-    url = 'https://www.livescores.com/'
+    online = environ.get("ONLINE", "True")
+    url = "https://www.livescores.com/"
     file1 = "./livescores/live_football.html"
     file2 = "./livescores/live_football_usa_mls.html"
     instance = WebPageMonitor()
-    args = {
-            'file': file1,
-            'file2': file2,
-            'online': online,
-            'url': url
-        }
-    
+    args = {"file": file1, "file2": file2, "online": online, "url": url}
 
     def do_EOF(self, arg):
         """
@@ -49,13 +43,13 @@ class GUZECommand(cmd.Cmd):
         A method used to overwriting the emptyline method
         """
         return False
-    
+
     def do_quit(self, arg):
         """
         A method used to exit the program
         """
         return True
-    
+
     def _key_value_parser(self, args):
         """
         A method used to creates a dictionary from a list of strings.
@@ -63,11 +57,11 @@ class GUZECommand(cmd.Cmd):
         new_dict = {}
         for arg in args:
             if "=" in arg:
-                kvparser = arg.split('=', 1)
+                kvparser = arg.split("=", 1)
                 key = kvparser[0]
                 value = kvparser[1]
                 if value[0] == value[-1] == '"':
-                    value = shlex.split(value)[0].replace('_', ' ')
+                    value = shlex.split(value)[0].replace("_", " ")
                 else:
                     try:
                         value = int(value)
@@ -78,23 +72,24 @@ class GUZECommand(cmd.Cmd):
                             continue
                 new_dict[key] = value
         return new_dict
-    
+
     def set_dict_of_sports(self):
         """
         A method to get dictionary
         of all availbale sports
         """
-        
+
         results = self.instance.set_dict_of_sports(**self.args)
-        if (results == None):
-            if (self.args['online'] == 'True'):
+        if results == None:
+            if self.args["online"] == "True":
                 print("An error occurred while trying to visit the internet, ")
                 print("please check you internet connection")
             else:
-                print("An unknown error occurred, check arguments passed to the software, or the offline file being parsed")
+                print(
+                    "An unknown error occurred, check arguments passed to the software, or the offline file being parsed"
+                )
         else:
-            return (results)
-
+            return results
 
     def do_list_of_sports(self, arg):
         """
@@ -102,90 +97,96 @@ class GUZECommand(cmd.Cmd):
         that can be monitored.
         """
         sports = self.set_dict_of_sports()
-        if (sports):
-            print('To select a sport use the command below')
+        if sports:
+            print("To select a sport use the command below")
             print("Usage: select_sport <sport_number>")
-            headers = ['Number', 'Sport']
+            headers = ["Number", "Sport"]
             table = []
             for key, value in sports.items():
                 new_sport = []
                 new_sport.append(key)
-                new_sport.append(value['name'])
+                new_sport.append(value["name"])
                 table.append(new_sport)
-            print(tabulate(table, headers, tablefmt='grid'))
+            print(tabulate(table, headers, tablefmt="grid"))
 
     def do_select_sport(self, arg):
         """
         A method used to select a paraticular sport.
         """
-        if (arg):
+        if arg:
             result = self.instance.select_sport(arg, **self.args)
-            if (result == None):
+            if result == None:
                 print("***{} is not a valid entry***".format(arg))
                 print("Select a sport via it's number:")
                 self.do_list_of_sports(arg)
             else:
-                headers = ['Number', 'Sport']
-                table = [['{}'.format(arg), '{}'.format(result[int(arg)]['name'])]]
-                print('You have selected:')
-                print(tabulate(table, headers, tablefmt='grid'))     
+                headers = ["Number", "Sport"]
+                table = [["{}".format(arg), "{}".format(result[int(arg)]["name"])]]
+                print("You have selected:")
+                print(tabulate(table, headers, tablefmt="grid"))
         else:
             print("Select a sport via it's number:")
             self.do_list_of_sports(arg)
-    
+
     def do_select_all_available_sports(self, arg):
         """
         A method used to select all available sports
         """
         result = self.instance.select_all_available_sports(**self.args)
-        if (result == None):
+        if result == None:
             print("There was an error selecting all sports, try again.")
         else:
             print("You have successfully selected all available sports for monitoring.")
             self.do_all_monitored_sports(arg)
-
 
     def do_all_monitored_sports(self, arg):
         """
         A method used to list all monitored sports.
         """
         selected_sports = self.instance.all_monitored_sports()
-        if (len(selected_sports) <= 0):
-            print("No sports selected run 'list_of_sports' to get the list of available sports to monitor")
+        if len(selected_sports) <= 0:
+            print(
+                "No sports selected run 'list_of_sports' to get the list of available sports to monitor"
+            )
         else:
             print("List of all monitored sports:")
-            headers = ['Number', 'Sport']
+            headers = ["Number", "Sport"]
             table = []
             for key, value in selected_sports.items():
                 new_sport = []
                 new_sport.append(key)
-                new_sport.append(value['name'])
+                new_sport.append(value["name"])
                 table.append(new_sport)
-            print(tabulate(table, headers, tablefmt='grid'))
-              
+            print(tabulate(table, headers, tablefmt="grid"))
 
     def do_delete_monitored_sport(self, arg):
         """
         A method used to delete a monitored sport.
         """
         selected_sports = self.instance.get_selected_sports()
-        if (len(selected_sports.keys()) == 0):
+        if len(selected_sports.keys()) == 0:
             print("You are currently not monitoring any sport(s)")
-            print("Run the command 'list_of_sports' to get the list of sports you can monitor")
+            print(
+                "Run the command 'list_of_sports' to get the list of sports you can monitor"
+            )
         else:
-            if (arg):
+            if arg:
                 result = self.instance.delete_monitored_sport(arg)
-                if (result):
-                    print('From monitored sports, you have deleted:')
-                    headers = ['Number', 'Sport']
+                if result:
+                    print("From monitored sports, you have deleted:")
+                    headers = ["Number", "Sport"]
                     table = []
                     new_sport = []
                     new_sport.append(arg)
                     new_sport.append(result)
                     table.append(new_sport)
-                    print(tabulate(table, headers, tablefmt='grid'))
+                    print(tabulate(table, headers, tablefmt="grid"))
                 else:
-                    print('***{} is not a valid sport number you are monitoring***'.format(arg))
+                    print(
+                        "***{} is not a valid sport number you are monitoring***".format(
+                            arg
+                        )
+                    )
                     print("You need to passed the sport number to be deleted")
                     print("Usage: delete_monitored_sport <sport_number>")
                     self.do_all_monitored_sports(arg)
@@ -199,7 +200,7 @@ class GUZECommand(cmd.Cmd):
         A method used to delete all monitored sports.
         """
         result = self.instance.delete_all_monitored_sports(arg)
-        if (result == True):
+        if result == True:
             print("All monitored sports have been deleted")
         else:
             print("An Error occurred, please try again.")
@@ -208,75 +209,90 @@ class GUZECommand(cmd.Cmd):
         """
         A method used to get all live games leagues and tournaments
         """
-        result = self.instance.all_lt(**self.args)
-        if (result == None):
-            print("An error occurred. Make sure you already selected sport(s) to monitor")
-            self.do_all_monitored_sports(arg)
-        else:
-            monitored_sports = self.instance.all_monitored_sports()
+        monitored_sports = self.instance.all_monitored_sports()
+        if monitored_sports:
+            result = self.instance.all_lt(**self.args)
             for key, value in monitored_sports.items():
-                headers = ['Number', 'Sport']
+                headers = ["Number", "Sport"]
                 table = []
                 new_sport = []
                 new_sport.append(key)
-                new_sport.append(value["name"])
+                new_sport.append(value['name'])
                 table.append(new_sport)
-                print(tabulate(table, headers, tablefmt='grid'))
-                lt = result.get(value["name"])
-                if (lt):
-                    headers = ['Number', 'League or Tornament', 'Sport', 'Date']
-                    table2 = []
-                    for key, value1 in lt.items():
+                print(tabulate(table, headers, tablefmt="grid"))
+                key2 = result.get(value['name'])
+                if key2 is not None:
+                    for key3, value3 in key2.items():
+                        headers2 = ["League or Tournament", "Date"]
+                        table2 = []
                         new_lt = []
-                        new_lt.append(key)
-                        lte = value1['name'] + ' - ' + value1['event']
-                        new_lt.append(lte)
-                        new_lt.append(value['name'])
-                        new_lt.append(value1['date'])
+                        new_lt.append(key3)
+                        new_lt.append(value3['date'])
                         table2.append(new_lt)
-                    print(tabulate(table2, headers, tablefmt='grid'))
+                        print(tabulate(table2, headers2, tablefmt="grid"))
+                        headers3 = ["Time", "Home", "Home Score", "Away Score", "Away"]
+                        table3 = []
+                        for key4, value4 in value3['live_lt'].items():
+                            new_match = []
+                            new_match.append(value4['time'])
+                            new_match.append(value4['home'])
+                            new_match.append(value4['home_score'])
+                            new_match.append(value4['away_score'])
+                            new_match.append(value4['away'])
+                            table3.append(new_match)
+                        print(tabulate(table3, headers3, tablefmt="grid"))
+                        print()
                 else:
-                    headers = ['Number', 'League or Tornament', 'Sport', 'Date']
+                    headers = ["Number", "League or Tornament", "Sport", "Date"]
                     table2 = []
                     new_lt = []
                     new_lt.append("NO LIVE")
                     new_lt.append("SPORT")
                     new_lt.append("TODAY FOR")
-                    new_lt.append(value['name'])
+                    new_lt.append(value["name"])
                     table2.append(new_lt)
-                    print(tabulate(table2, headers, tablefmt='grid'))
-                print()
-                print()
-            print("To add a league or tournament to live stream run the command below:")
-            print("Usage: add_lt <sport_number> <league or tournament number>")
+                    print(tabulate(table2, headers, tablefmt="grid"))
+                    print()
+        else:
+            print("no sports")
+            self.do_all_monitored_sports(arg)
 
     def do_add_lt(self, arg):
         """
         A method used to add live leagues or tournaments.
         """
         monitored_sports = self.instance.all_monitored_sports()
-        if (monitored_sports):
-            args = arg.split(' ')
+        if monitored_sports:
+            args = arg.split(" ")
             try:
                 number = int(args[0])
                 key = monitored_sports.get(number)
-                if (key):
-                    if (len(args) < 2):
+                if key:
+                    if len(args) < 2:
                         print("An error occurred")
                         print("You need to pass the league or tournament number")
-                        print('Usage: add_lt <sport number> <league or tournament number(s)')
+                        print(
+                            "Usage: add_lt <sport number> <league or tournament number(s)"
+                        )
                     else:
                         print(key)
                 else:
-                    print("***'{}' not part of your list of monitored sports".format(number))
+                    print(
+                        "***'{}' not part of your list of monitored sports".format(
+                            number
+                        )
+                    )
                     self.do_all_monitored_sports(arg)
             except Exception as e:
                 # print(e)
                 print("An error occurred")
                 print("***'{}' is not a valid entry, try again***".format(args[0]))
         else:
-            print("An error occurred. Make sure you already selected sport(s) to monitor")
+            print(
+                "An error occurred. Make sure you already selected sport(s) to monitor"
+            )
             self.do_all_monitored_sports(arg)
+
 
 if __name__ == "__main__":
     GUZECommand().cmdloop()

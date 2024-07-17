@@ -201,51 +201,147 @@ class WebPageMonitor(BaseModel):
                         live_games = cen_content.find('div', class_="na")
                         lt = live_games.find_all('div', class_='lb')
                         for div in lt:
-                            print(div)
                             spans = div.find_all('span')
-                            print(spans[1])
-                                    
+                            name = '{} - {}'.format(spans[1].text, spans[2].text)
+                            date = '{}'.format(spans[3].text)
+                            lt_details[name] = {}
+                            lt_details[name]['date'] = date
+                            lt_details[name]['name'] = name
+                            lt_details[name]['live_lt'] = {}
+                            i = 1
                             for sib in div.next_siblings:
                                 if sib.get('class')[0] == 'lb':
                                     # new lt
                                     break
                                 else:
                                     # new live match
-                                    print(sib.get('class')[0])
-
-
-
-                        # index = 1
-                        # name = ''
-                        # name_link = ''
-                        # for div in lt:
-                        #     spans = div.find_all('span')
-                        #     for span in spans:
-                        #         search = span.find_all('a', class_='ed')
-                        #         if search:
-                        #             lt_details[index] = {}
-                        #             for a in search:
-                        #                 for child in a.children:
-                        #                     cls = child.get('class')[0]
-                        #                     if (cls == 'ob'):
-                        #                         name = child.text
-                        #                         name_link = child.parent.get('href')
-                        #                     if (cls == 'pb'):
-                        #                         lt_details[index]['event'] = child.text
-                        #                         lt_details[index]['event_link'] = child.parent.get('href')
-                        #         else:
-                        #             cls = span.get('class')[0]
-                        #             if (cls == 'mb'):
-                        #                 date = span.text
-                        #                 lt_details[index]['date'] = date
-                        #     lt_details[index]['name'] = name    
-                        #     lt_details[index]['name_link'] = name_link
-                        #     index += 1
+                                    time = sib.find('span', class_='ch Yg bh').text
+                                    home = sib.find('span', class_='di').text
+                                    home_score = sib.find('span', class_='gi').text
+                                    away = sib.find('span', class_='ci').next.text
+                                    away_score = sib.find('span', class_='hi').text
+                                    lt_details[name]['live_lt'][i] = {}
+                                    lt_details[name]['live_lt'][i]['time'] = time
+                                    lt_details[name]['live_lt'][i]['home'] = home
+                                    lt_details[name]['live_lt'][i]['home_score'] = home_score
+                                    lt_details[name]['live_lt'][i]['away'] = away
+                                    lt_details[name]['live_lt'][i]['away_score'] = away_score
+                                i += 1
                     self.lt[active] = lt_details
                 else:
                     continue
         elif (kwargs['online'] == 'True'):
-            print('online')
+            for key, value in self.selected_sports.items():
+                print("runnig")
+                lt_details = {}
+                url = value['link']
+                response = requests.get(url)
+                file = {'fp': response.content}
+                monitor = self.init_BeautifulSoup(**file)
+                header = monitor.find('header', class_='Nd')
+                active = header.find('a', class_='isActive')
+                active = active.find('span', class_='Pd')
+                active = active.text
+                cen_content = monitor.find('div',  class_='ea', id='content-center')
+                live_games = cen_content.find('div', class_="na")
+                lt = live_games.find_all('div', class_='lb')
+                for div in lt:
+                    spans = div.find_all('span')
+                    name = '{} - {}'.format(spans[1].text, spans[2].text)
+                    date = '{}'.format(spans[3].text)
+                    lt_details[name] = {}
+                    lt_details[name]['date'] = date
+                    lt_details[name]['name'] = name
+                    lt_details[name]['live_lt'] = {}
+                    i = 1
+                    for sib in div.next_siblings:
+                        if sib.get('class')[0] == 'lb':
+                            # new lt
+                            break
+                        else:
+                            # new live match
+                            if (active == 'Football'):
+                                try:
+                                    time = sib.find('span', class_='ch Yg bh').text
+                                except Exception as e:
+                                    time = sib.find('span', class_='ch Yg').text
+                                home = sib.find('span', class_='di').text
+                                home_score = sib.find('span', class_='gi').text
+                                away = sib.find('span', class_='ci').next.text
+                                away_score = sib.find('span', class_='hi').text
+                                lt_details[name]['live_lt'][i] = {}
+                                lt_details[name]['live_lt'][i]['time'] = time
+                                lt_details[name]['live_lt'][i]['home'] = home
+                                lt_details[name]['live_lt'][i]['home_score'] = home_score
+                                lt_details[name]['live_lt'][i]['away'] = away
+                                lt_details[name]['live_lt'][i]['away_score'] = away_score
+                            elif (active == 'Hockey'):
+                                try:
+                                    time = sib.find('span', class_='ch Yg bh').text
+                                except Exception as e:
+                                    time = sib.find('span', class_='ch Yg').text
+                                home = sib.find('span', class_='di').text
+                                home_score = sib.find('span', class_='gi').text
+                                away = sib.find('span', class_='ci').next.text
+                                away_score = sib.find('span', class_='hi').text
+                                lt_details[name]['live_lt'][i] = {}
+                                lt_details[name]['live_lt'][i]['time'] = time
+                                lt_details[name]['live_lt'][i]['home'] = home
+                                lt_details[name]['live_lt'][i]['home_score'] = home_score
+                                lt_details[name]['live_lt'][i]['away'] = away
+                                lt_details[name]['live_lt'][i]['away_score'] = away_score
+                            elif (active == 'Basketball'):
+                                try:
+                                    time = sib.find('span', class_='ch Yg bh').text
+                                except Exception as e:
+                                    time = sib.find('span', class_='ch Yg').text
+                                home = sib.find('span', class_='di').text
+                                home_score = sib.find('span', class_='gi').text
+                                away = sib.find('span', class_='ci').next.text
+                                away_score = sib.find('span', class_='hi').text
+                                lt_details[name]['live_lt'][i] = {}
+                                lt_details[name]['live_lt'][i]['time'] = time
+                                lt_details[name]['live_lt'][i]['home'] = home
+                                lt_details[name]['live_lt'][i]['home_score'] = home_score
+                                lt_details[name]['live_lt'][i]['away'] = away
+                                lt_details[name]['live_lt'][i]['away_score'] = away_score
+                            elif (active == 'Tennis'):
+                                try:
+                                    time = sib.find('span', class_='ch Yg bh').text
+                                except Exception as e:
+                                    time = sib.find('span', class_='ch Yg').text
+                                home = sib.find('span', class_='di').text
+                                home_score = sib.find('span', class_='gi').text
+                                away = sib.find('span', class_='ci').next.text
+                                away_score = sib.find('span', class_='hi').text
+                                lt_details[name]['live_lt'][i] = {}
+                                lt_details[name]['live_lt'][i]['time'] = time
+                                lt_details[name]['live_lt'][i]['home'] = home
+                                lt_details[name]['live_lt'][i]['home_score'] = home_score
+                                lt_details[name]['live_lt'][i]['away'] = away
+                                lt_details[name]['live_lt'][i]['away_score'] = away_score
+                            elif (active == 'Cricket'):
+                                try:
+                                    time = sib.find('span', class_='ch Yg bh').text
+                                except Exception as e:
+                                    time = sib.find('span', class_='ch Yg').text
+                                home = sib.find('span', class_='di').text
+                                home_score = sib.find('span', class_='gi').text
+                                away = sib.find('span', class_='ci').next.text
+                                away_score = sib.find('span', class_='hi').text
+                                lt_details[name]['live_lt'][i] = {}
+                                lt_details[name]['live_lt'][i]['time'] = time
+                                lt_details[name]['live_lt'][i]['home'] = home
+                                lt_details[name]['live_lt'][i]['home_score'] = home_score
+                                lt_details[name]['live_lt'][i]['away'] = away
+                                lt_details[name]['live_lt'][i]['away_score'] = away_score
+
+
+
+                        i += 1
+                
+                self.lt[active] = lt_details
+
         else:
             return (None)
 
