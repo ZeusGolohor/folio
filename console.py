@@ -212,6 +212,8 @@ class GUZECommand(cmd.Cmd):
         monitored_sports = self.instance.all_monitored_sports()
         if monitored_sports:
             result = self.instance.all_lt(**self.args)
+            # print(result)
+            # exit()
             for key, value in monitored_sports.items():
                 headers = ["Number", "Sport"]
                 table = []
@@ -221,7 +223,7 @@ class GUZECommand(cmd.Cmd):
                 table.append(new_sport)
                 print(tabulate(table, headers, tablefmt="grid"))
                 key2 = result.get(value['name'])
-                if key2 is not None:
+                if key2:
                     for key3, value3 in key2.items():
                         headers2 = ["League or Tournament", "Date"]
                         table2 = []
@@ -230,7 +232,7 @@ class GUZECommand(cmd.Cmd):
                         new_lt.append(value3['date'])
                         table2.append(new_lt)
                         print(tabulate(table2, headers2, tablefmt="grid"))
-                        headers3 = ["Time", "Home", "Home Score", "Away Score", "Away"]
+                        headers3 = ["Time", "Team", "Score", "Score", "Team"]
                         table3 = []
                         for key4, value4 in value3['live_lt'].items():
                             new_match = []

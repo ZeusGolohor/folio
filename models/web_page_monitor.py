@@ -6,6 +6,7 @@ from models.base_model import BaseModel
 from bs4 import BeautifulSoup
 from os import environ
 import requests
+import re
 
 
 
@@ -232,9 +233,9 @@ class WebPageMonitor(BaseModel):
                     continue
         elif (kwargs['online'] == 'True'):
             for key, value in self.selected_sports.items():
-                print("runnig")
                 lt_details = {}
-                url = value['link']
+                # url = value['link']
+                url = 'https://www.livescores.com/tennis/2024-07-16/?tz=-7'
                 response = requests.get(url)
                 file = {'fp': response.content}
                 monitor = self.init_BeautifulSoup(**file)
@@ -244,10 +245,13 @@ class WebPageMonitor(BaseModel):
                 active = active.text
                 cen_content = monitor.find('div',  class_='ea', id='content-center')
                 live_games = cen_content.find('div', class_="na")
-                lt = live_games.find_all('div', class_='lb')
+                lt = live_games.find_all('div', class_=re.compile('lb'))
                 for div in lt:
                     spans = div.find_all('span')
-                    name = '{} - {}'.format(spans[1].text, spans[2].text)
+                    try:
+                        name = '{} - {}'.format(spans[1].text, spans[2].text)
+                    except Exception as e:
+                        continue
                     date = '{}'.format(spans[3].text)
                     lt_details[name] = {}
                     lt_details[name]['date'] = date
@@ -255,16 +259,25 @@ class WebPageMonitor(BaseModel):
                     lt_details[name]['live_lt'] = {}
                     i = 1
                     for sib in div.next_siblings:
+                        if sib.get('class')[0] == 'pa':
+                            continue
                         if sib.get('class')[0] == 'lb':
                             # new lt
                             break
                         else:
                             # new live match
                             if (active == 'Football'):
+                                # try:
+                                #     time = sib.find('span', class_='ch Yg bh').text
+                                # except Exception as e:
+                                #     time = sib.find('span', class_='ch Yg').text
+                                #  # time = sib.find('span', class_=('ch Yg')).text
                                 try:
-                                    time = sib.find('span', class_='ch Yg bh').text
+                                    time = sib.find('span', class_='ch Yg')
+                                    time = time.text
                                 except Exception as e:
-                                    time = sib.find('span', class_='ch Yg').text
+                                    print(e)
+                                    print(sib)
                                 home = sib.find('span', class_='di').text
                                 home_score = sib.find('span', class_='gi').text
                                 away = sib.find('span', class_='ci').next.text
@@ -276,14 +289,23 @@ class WebPageMonitor(BaseModel):
                                 lt_details[name]['live_lt'][i]['away'] = away
                                 lt_details[name]['live_lt'][i]['away_score'] = away_score
                             elif (active == 'Hockey'):
+                                time = sib.find('span', class_=re.compile('ch Yg')).text
+                                ht = sib.find('div', class_='Qf')
+                                home = ht.text
+                                away = ht.next_sibling.text
+                                home_score = ''
+                                away_score = ''
+                                hsas = sib.find('div', class_=re.compile('Mf Nf'))
                                 try:
-                                    time = sib.find('span', class_='ch Yg bh').text
+                                    home_score += hsas.contents[0].text
                                 except Exception as e:
-                                    time = sib.find('span', class_='ch Yg').text
-                                home = sib.find('span', class_='di').text
-                                home_score = sib.find('span', class_='gi').text
-                                away = sib.find('span', class_='ci').next.text
-                                away_score = sib.find('span', class_='hi').text
+                                    continue
+                                away_score += hsas.contents[1].text
+                                bt_score = sib.find('div', class_='Kf')
+                                for score in bt_score.contents[0]:
+                                    home_score += score.text
+                                for score in bt_score.contents[1]:
+                                    away_score += score.text
                                 lt_details[name]['live_lt'][i] = {}
                                 lt_details[name]['live_lt'][i]['time'] = time
                                 lt_details[name]['live_lt'][i]['home'] = home
@@ -291,14 +313,34 @@ class WebPageMonitor(BaseModel):
                                 lt_details[name]['live_lt'][i]['away'] = away
                                 lt_details[name]['live_lt'][i]['away_score'] = away_score
                             elif (active == 'Basketball'):
+                                # try:
+                                #     time = sib.find('span', class_='ch Yg bh').text
+                                # except Exception as e:
+                                #     time = sib.find('span', class_='ch Yg').text
+                                time = sib.find('span', class_=re.compile('ch Yg')).text
+                                ht = sib.find('div', class_='Qf')
+                                home = ht.text
+                                away = ht.next_sibling.text
+                                home_score = ''
+                                away_score = ''
+                                # hsas = sib.find('div', class_='Mf Nf Of')
+                                hsas = sib.find('div', class_=re.compile('Mf Nf'))
+                                home_score = ''
+                                away_score = ''
                                 try:
-                                    time = sib.find('span', class_='ch Yg bh').text
+                                    home_score += hsas.contents[0].text
                                 except Exception as e:
-                                    time = sib.find('span', class_='ch Yg').text
-                                home = sib.find('span', class_='di').text
-                                home_score = sib.find('span', class_='gi').text
-                                away = sib.find('span', class_='ci').next.text
-                                away_score = sib.find('span', class_='hi').text
+                                    continue
+                                away_score += hsas.contents[1].text
+                                bt_score = sib.find('div', class_='Kf')
+                                for score in bt_score.contents[0]:
+                                    home_score += score.text
+                                for score in bt_score.contents[1]:
+                                    away_score += score.text
+                                
+                                # home_score = sib.find('span', class_='gi').text
+                                # away = sib.find('span', class_='ci').next.text
+                                # away_score = sib.find('span', class_='hi').text
                                 lt_details[name]['live_lt'][i] = {}
                                 lt_details[name]['live_lt'][i]['time'] = time
                                 lt_details[name]['live_lt'][i]['home'] = home
@@ -306,11 +348,25 @@ class WebPageMonitor(BaseModel):
                                 lt_details[name]['live_lt'][i]['away'] = away
                                 lt_details[name]['live_lt'][i]['away_score'] = away_score
                             elif (active == 'Tennis'):
+                                print("Tennis")
                                 try:
                                     time = sib.find('span', class_='ch Yg bh').text
                                 except Exception as e:
                                     time = sib.find('span', class_='ch Yg').text
-                                home = sib.find('span', class_='di').text
+                                # home = sib.find('span', class_='di').text
+                                bt = sib.find('div', class_='If Jf')
+                                home = bt.contents[0].next
+                                home = home.text
+                                away = bt.contents[1].next
+                                away = away.text
+                                home_score = ''
+                                away_score = ''
+                                hsas = sib.find('div', class_=re.compile('Kf Jf'))
+                                
+                                print(time)
+                                print(home)
+                                print(away)
+                                exit()
                                 home_score = sib.find('span', class_='gi').text
                                 away = sib.find('span', class_='ci').next.text
                                 away_score = sib.find('span', class_='hi').text
@@ -321,25 +377,25 @@ class WebPageMonitor(BaseModel):
                                 lt_details[name]['live_lt'][i]['away'] = away
                                 lt_details[name]['live_lt'][i]['away_score'] = away_score
                             elif (active == 'Cricket'):
-                                try:
-                                    time = sib.find('span', class_='ch Yg bh').text
-                                except Exception as e:
-                                    time = sib.find('span', class_='ch Yg').text
-                                home = sib.find('span', class_='di').text
-                                home_score = sib.find('span', class_='gi').text
-                                away = sib.find('span', class_='ci').next.text
-                                away_score = sib.find('span', class_='hi').text
+                                # try:
+                                #     time = sib.find('span', class_='ch Yg bh').text
+                                # except Exception as e:
+                                #     time = sib.find('span', class_='ch Yg').text
+                                time = sib.find('span', class_='Mh').text
+                                bt = sib.find('div', class_='Nh')
+                                home = bt.contents[0].text
+                                away = bt.contents[1].text
+                                h_s = sib.find('div', class_='Qh')
+                                home_score = h_s.find('div', class_='Sh').text
+                                a_s = sib.find('div', class_='Ph')
+                                away_score = a_s.find('div', class_='Sh').text
                                 lt_details[name]['live_lt'][i] = {}
                                 lt_details[name]['live_lt'][i]['time'] = time
                                 lt_details[name]['live_lt'][i]['home'] = home
                                 lt_details[name]['live_lt'][i]['home_score'] = home_score
                                 lt_details[name]['live_lt'][i]['away'] = away
                                 lt_details[name]['live_lt'][i]['away_score'] = away_score
-
-
-
                         i += 1
-                
                 self.lt[active] = lt_details
 
         else:
