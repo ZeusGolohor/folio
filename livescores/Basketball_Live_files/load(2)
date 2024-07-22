@@ -1,8 +1,8 @@
-(function(w,d){var divName="zone_1439007886",zone=w.ABN(divName),media={id:1932557953,poolID:1927902317,width:300,height:250,campaignID:2108419715,zoneID:1439007886,siteID:1960297534, url:"https://z.cdn.ftd.agency/go?z=1439007886&m=1932557953&c=2108419715&p0=1927902317&u=3eb38e8e7a00ca86&t=1721255212&n=6770187413907389193&h=1227016108", view:"https://z.cdn.ftd.agency/event?z=1439007886&m=1932557953&n=6770187413907389193&u=3eb38e8e7a00ca86&t=",
+(function(w,d){var divName="zone_1935622214",zone=w.ABN(divName),media={id:2091488884,poolID:1161762526,width:300,height:600,campaignID:2012883626,zoneID:1935622214,siteID:1960297534, url:"https://z.cdn.ftd.agency/go?z=1935622214&m=2091488884&c=2012883626&p0=1161762526&u=3eb38e8e7a00ca86&t=1721612133&n=3431836429689848765&h=2680803987", view:"https://z.cdn.ftd.agency/event?z=1935622214&m=2091488884&n=3431836429689848765&u=3eb38e8e7a00ca86&t=",
 os:5,
-country:116, path:ABN.protocol+"//f8.cdn.ftd.agency/uploads/media/4/9/100894/"};zone.catID=0;
+country:116, path:ABN.protocol+"//f8.cdn.ftd.agency/uploads/media/3/9/98193/"};zone.catID=0;
 zone.cat=["IAB1"];
-media.vars={"file":{"image":"v1/1st_Dep_Referee_300x250.gif"},"auto_button":"1"};
+media.vars={"file":{"image":"v1/Live_stream_2023_300x600.gif"},"auto_button":"1"};
 zone.media=media;
 /*tm11*/
 var $jscomp=$jscomp||{};$jscomp.scope={};$jscomp.createTemplateTagFirstArg=function(a){return a.raw=a};$jscomp.createTemplateTagFirstArgWithRaw=function(a,b){a.raw=b;return a};$jscomp.arrayIteratorImpl=function(a){var b=0;return function(){return b<a.length?{done:!1,value:a[b++]}:{done:!0}}};$jscomp.arrayIterator=function(a){return{next:$jscomp.arrayIteratorImpl(a)}};

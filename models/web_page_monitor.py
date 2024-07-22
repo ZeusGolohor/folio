@@ -75,9 +75,9 @@ class WebPageMonitor(BaseModel):
                         name = child.text
                         link = child.get('href')
                         if (link == '/'):
-                            link = '{}{}football/live'.format(self.url, link)
+                            link = '{}{}football/live/?tz=-7'.format(self.url, link)
                         else:
-                            link = '{}{}live'.format(self.url, link)
+                            link = '{}{}live/?tz=-7'.format(self.url, link)
                         self.sports[i] = {'name': name, 'link': link}
                         i += 1
                     return self.sports
@@ -189,34 +189,50 @@ class WebPageMonitor(BaseModel):
         """
         if (kwargs['online'] == 'False'):
             for key, value in self.selected_sports.items():
-                if (int(key) == 1):
-                    lt_details = {}
-                    with open(kwargs.get('file'), 'r') as fp:
-                        args = {'fp': fp}
-                        monitor = self.init_BeautifulSoup(**args)
-                        header = monitor.find('header', class_='Nd')
-                        active = header.find('a', class_='isActive')
-                        active = active.find('span', class_='Pd')
-                        active = active.text
-                        cen_content = monitor.find('div',  class_='ea', id='content-center')
-                        live_games = cen_content.find('div', class_="na")
-                        lt = live_games.find_all('div', class_='lb')
-                        for div in lt:
-                            spans = div.find_all('span')
+                lt_details = {}
+                if (value['name'] == 'Football'):
+                    file = './livescores/live_football.html'
+                if (value['name'] == 'Hockey'):
+                    file = './livescores/live_football.html'
+                if (value['name'] == 'Basketball'):
+                    file = './livescores/Basketball_Live.html'
+                if (value['name'] == 'Tennis'):
+                    file = './livescores/Tennis_Live_Scores.html'
+                if (value['name'] == 'Cricket'):
+                    file = './livescores/Cricket_Live_Scores.html'
+                with open(file, 'r') as fp:
+                    file = {'fp': fp}
+                    monitor = self.init_BeautifulSoup(**file)
+                    header = monitor.find('header', class_='Nd')
+                    active = header.find('a', class_='isActive')
+                    active = active.find('span', class_='Pd')
+                    active = active.text
+                    cen_content = monitor.find('div',  class_='ea', id='content-center')
+                    live_games = cen_content.find('div', class_="na")
+                    lt = live_games.find_all('div', class_=re.compile('lb'))
+                    for div in lt:
+                        spans = div.find_all('span')
+                        try:
                             name = '{} - {}'.format(spans[1].text, spans[2].text)
-                            date = '{}'.format(spans[3].text)
-                            lt_details[name] = {}
-                            lt_details[name]['date'] = date
-                            lt_details[name]['name'] = name
-                            lt_details[name]['live_lt'] = {}
-                            i = 1
-                            for sib in div.next_siblings:
-                                if sib.get('class')[0] == 'lb':
-                                    # new lt
-                                    break
-                                else:
-                                    # new live match
-                                    time = sib.find('span', class_='ch Yg bh').text
+                        except Exception as e:
+                            continue
+                        date = '{}'.format(spans[3].text)
+                        lt_details[name] = {}
+                        lt_details[name]['date'] = date
+                        lt_details[name]['name'] = name
+                        lt_details[name]['live_lt'] = {}
+                        i = 1
+                        for sib in div.next_siblings:
+                            if sib.get('class')[0] == 'pa':
+                                continue
+                            if sib.get('class')[0] == 'lb':
+                                # new lt
+                                break
+                            else:
+                                # new live match
+                                if (active == 'Football'):
+                                    time = sib.find('span', class_=re.compile('ch Yg'))
+                                    time = time.text
                                     home = sib.find('span', class_='di').text
                                     home_score = sib.find('span', class_='gi').text
                                     away = sib.find('span', class_='ci').next.text
@@ -227,15 +243,175 @@ class WebPageMonitor(BaseModel):
                                     lt_details[name]['live_lt'][i]['home_score'] = home_score
                                     lt_details[name]['live_lt'][i]['away'] = away
                                     lt_details[name]['live_lt'][i]['away_score'] = away_score
-                                i += 1
+                                elif (active == 'Hockey'):
+                                    time = sib.find('span', class_=re.compile('ch Yg')).text
+                                    ht = sib.find('div', class_='Qf')
+                                    home = ht.text
+                                    away = ht.next_sibling.text
+                                    home_score = ''
+                                    away_score = ''
+                                    hsas = sib.find('div', class_=re.compile('Mf Nf'))
+                                    try:
+                                        home_score += hsas.contents[0].text
+                                    except Exception as e:
+                                        continue
+                                    away_score += hsas.contents[1].text
+                                    bt_score = sib.find('div', class_='Kf')
+                                    for score in bt_score.contents[0]:
+                                        home_score += score.text
+                                    for score in bt_score.contents[1]:
+                                        away_score += score.text
+                                    lt_details[name]['live_lt'][i] = {}
+                                    lt_details[name]['live_lt'][i]['time'] = time
+                                    lt_details[name]['live_lt'][i]['home'] = home
+                                    lt_details[name]['live_lt'][i]['home_score'] = home_score
+                                    lt_details[name]['live_lt'][i]['away'] = away
+                                    lt_details[name]['live_lt'][i]['away_score'] = away_score
+                                elif (active == 'Basketball'):
+                                    # try:
+                                    #     time = sib.find('span', class_='ch Yg bh').text
+                                    # except Exception as e:
+                                    #     time = sib.find('span', class_='ch Yg').text
+                                    time = sib.find('span', class_=re.compile('ch Yg')).text
+                                    ht = sib.find('div', class_='Qf')
+                                    home = ht.text
+                                    away = ht.next_sibling.text
+                                    # home_score = ''
+                                    # away_score = ''
+                                    # hsas = sib.find('div', class_='Mf Nf Of')
+                                    hsas = sib.find('div', class_=re.compile('Mf Nf'))
+                                    home_score = ''
+                                    away_score = ''
+                                    try:
+                                        home_score += hsas.contents[0].text
+                                    except Exception as e:
+                                        continue
+                                    away_score += hsas.contents[1].text
+                                    bt_score = sib.find('div', class_='Kf')
+                                    for score in bt_score.contents[0]:
+                                        home_score += score.text
+                                    for score in bt_score.contents[1]:
+                                        away_score += score.text
+                                    
+                                    # home_score = sib.find('span', class_='gi').text
+                                    # away = sib.find('span', class_='ci').next.text
+                                    # away_score = sib.find('span', class_='hi').text
+                                    lt_details[name]['live_lt'][i] = {}
+                                    lt_details[name]['live_lt'][i]['time'] = time
+                                    lt_details[name]['live_lt'][i]['home'] = home
+                                    lt_details[name]['live_lt'][i]['home_score'] = home_score
+                                    lt_details[name]['live_lt'][i]['away'] = away
+                                    lt_details[name]['live_lt'][i]['away_score'] = away_score
+                                elif (active == 'Tennis'):
+                                    try:
+                                        time = sib.find('span', class_=re.compile('ch Yg')).text
+                                    except Exception as e:
+                                        time = '-'
+                                    bt = sib.find('div', class_=re.compile('If Jf'))
+                                    tennis_ball = bt.find('div', class_=re.compile('Gf'))
+                                    try:
+                                        server = tennis_ball.next_sibling.text
+                                    except Exception as e:
+                                        server = '-'
+                                    # print("You're yet to work on tennis server line 363")
+                                    # use to delete the ball tag from the html
+                                    try:
+                                        tennis_ball.decompose()
+                                    except Exception as e:
+                                        pass
+                                    # print(server)
+                                    home = ''
+                                    away = ''
+                                    team1 = bt.contents[0]
+                                    team2 = bt.contents[1]
+                                    # to get team members names
+                                    no_plys = len(team1.contents)
+                                    if no_plys == 1:
+                                        try:
+                                            home = team1.contents[0].text
+                                        except Exception:
+                                            home = '-'
+                                        try:
+                                            away = team2.contents[0].text
+                                        except Exception:
+                                            away = '-'
+                                    elif no_plys == 2:
+                                        # home team
+                                        hp1 = team1.contents[0].text
+                                        hp2 = team1.contents[1].text
+                                        home = hp1 + ' || ' + hp2
+                                        # away team
+                                        ap1 = team2.contents[0].text
+                                        ap2 = team2.contents[1].text
+                                        away = ap1 + ' || ' + ap2
+                                    # to get scores
+                                    hsas = sib.find('div', class_=re.compile('Kf Jf'))
+                                    home_score = ''
+                                    away_score = ''
+                                    hsc = hsas.contents[0]
+                                    asc = hsas.contents[1]
+                                    # to get home score
+                                    for scr in hsc.contents:
+                                        sup = scr.find('sup').text
+                                        if len(sup) == 0:
+                                            score = scr.text
+                                            home_score += score
+                                            home_score += ' '
+                                        else:
+                                            scr.sup.decompose()
+                                            score = scr.text
+                                            home_score += score
+                                            home_score += '^' + sup
+                                            home_score += ' '
+                                    # to get away score
+                                    for scr in asc.contents:
+                                        sup = scr.find('sup').text
+                                        if len(sup) == 0:
+                                            score = scr.text
+                                            away_score += score
+                                            away_score += ' '
+                                        else:
+                                            scr.sup.decompose()
+                                            score = scr.text
+                                            away_score += score
+                                            away_score += '^' + sup
+                                            away_score += ' '
+                                    # Store all extracted details
+                                    lt_details[name]['live_lt'][i] = {}
+                                    lt_details[name]['live_lt'][i]['time'] = time
+                                    lt_details[name]['live_lt'][i]['home'] = home
+                                    lt_details[name]['live_lt'][i]['home_score'] = home_score
+                                    lt_details[name]['live_lt'][i]['away'] = away
+                                    lt_details[name]['live_lt'][i]['away_score'] = away_score
+                                elif (active == 'Cricket'):
+                                    # try:
+                                    #     time = sib.find('span', class_='ch Yg bh').text
+                                    # except Exception as e:
+                                    #     time = sib.find('span', class_='ch Yg').text
+                                    time = sib.find('span', class_='Mh').text
+                                    bt = sib.find('div', class_='Nh')
+                                    home = bt.contents[0].text
+                                    away = bt.contents[1].text
+                                    h_s = sib.find('div', class_='Qh')
+                                    home_score = h_s.find('div', class_='Sh').text
+                                    a_s = sib.find('div', class_='Ph')
+                                    away_score = a_s.find('div', class_='Sh').text
+                                    lt_details[name]['live_lt'][i] = {}
+                                    lt_details[name]['live_lt'][i]['time'] = time
+                                    lt_details[name]['live_lt'][i]['home'] = home
+                                    lt_details[name]['live_lt'][i]['home_score'] = home_score
+                                    lt_details[name]['live_lt'][i]['away'] = away
+                                    lt_details[name]['live_lt'][i]['away_score'] = away_score
+                            i += 1
+                    # exit()
                     self.lt[active] = lt_details
-                else:
-                    continue
+                    
+                
         elif (kwargs['online'] == 'True'):
             for key, value in self.selected_sports.items():
                 lt_details = {}
-                # url = value['link']
-                url = 'https://www.livescores.com/tennis/2024-07-16/?tz=-7'
+                url = value['link']
+                # url = 'https://www.livescores.com/tennis/2024-07-18/?tz=-7'
                 response = requests.get(url)
                 file = {'fp': response.content}
                 monitor = self.init_BeautifulSoup(**file)
@@ -267,17 +443,8 @@ class WebPageMonitor(BaseModel):
                         else:
                             # new live match
                             if (active == 'Football'):
-                                # try:
-                                #     time = sib.find('span', class_='ch Yg bh').text
-                                # except Exception as e:
-                                #     time = sib.find('span', class_='ch Yg').text
-                                #  # time = sib.find('span', class_=('ch Yg')).text
-                                try:
-                                    time = sib.find('span', class_='ch Yg')
-                                    time = time.text
-                                except Exception as e:
-                                    print(e)
-                                    print(sib)
+                                time = sib.find('span', class_=re.compile('ch Yg'))
+                                time = time.text
                                 home = sib.find('span', class_='di').text
                                 home_score = sib.find('span', class_='gi').text
                                 away = sib.find('span', class_='ci').next.text
@@ -321,8 +488,8 @@ class WebPageMonitor(BaseModel):
                                 ht = sib.find('div', class_='Qf')
                                 home = ht.text
                                 away = ht.next_sibling.text
-                                home_score = ''
-                                away_score = ''
+                                # home_score = ''
+                                # away_score = ''
                                 # hsas = sib.find('div', class_='Mf Nf Of')
                                 hsas = sib.find('div', class_=re.compile('Mf Nf'))
                                 home_score = ''
@@ -348,28 +515,80 @@ class WebPageMonitor(BaseModel):
                                 lt_details[name]['live_lt'][i]['away'] = away
                                 lt_details[name]['live_lt'][i]['away_score'] = away_score
                             elif (active == 'Tennis'):
-                                print("Tennis")
                                 try:
-                                    time = sib.find('span', class_='ch Yg bh').text
+                                    time = sib.find('span', class_=re.compile('ch Yg')).text
                                 except Exception as e:
-                                    time = sib.find('span', class_='ch Yg').text
-                                # home = sib.find('span', class_='di').text
-                                bt = sib.find('div', class_='If Jf')
-                                home = bt.contents[0].next
-                                home = home.text
-                                away = bt.contents[1].next
-                                away = away.text
+                                    time = '-'
+                                bt = sib.find('div', class_=re.compile('If Jf'))
+                                tennis_ball = bt.find('div', class_=re.compile('Gf'))
+                                try:
+                                    server = tennis_ball.next_sibling.text
+                                except Exception as e:
+                                    server = '-'
+                                # print("You're yet to work on tennis server line 363")
+                                # use to delete the ball tag from the html
+                                try:
+                                    tennis_ball.decompose()
+                                except Exception as e:
+                                    pass
+                                # print(server)
+                                home = ''
+                                away = ''
+                                team1 = bt.contents[0]
+                                team2 = bt.contents[1]
+                                # to get team members names
+                                no_plys = len(team1.contents)
+                                if no_plys == 1:
+                                    try:
+                                        home = team1.contents[0].text
+                                    except Exception:
+                                        home = '-'
+                                    try:
+                                        away = team2.contents[0].text
+                                    except Exception:
+                                        away = '-'
+                                elif no_plys == 2:
+                                    # home team
+                                    hp1 = team1.contents[0].text
+                                    hp2 = team1.contents[1].text
+                                    home = hp1 + ' || ' + hp2
+                                    # away team
+                                    ap1 = team2.contents[0].text
+                                    ap2 = team2.contents[1].text
+                                    away = ap1 + ' || ' + ap2
+                                # to get scores
+                                hsas = sib.find('div', class_=re.compile('Kf Jf'))
                                 home_score = ''
                                 away_score = ''
-                                hsas = sib.find('div', class_=re.compile('Kf Jf'))
-                                
-                                print(time)
-                                print(home)
-                                print(away)
-                                exit()
-                                home_score = sib.find('span', class_='gi').text
-                                away = sib.find('span', class_='ci').next.text
-                                away_score = sib.find('span', class_='hi').text
+                                hsc = hsas.contents[0]
+                                asc = hsas.contents[1]
+                                # to get home score
+                                for scr in hsc.contents:
+                                    sup = scr.find('sup').text
+                                    if len(sup) == 0:
+                                        score = scr.text
+                                        home_score += score
+                                        home_score += ' '
+                                    else:
+                                        scr.sup.decompose()
+                                        score = scr.text
+                                        home_score += score
+                                        home_score += '^' + sup
+                                        home_score += ' '
+                                # to get away score
+                                for scr in asc.contents:
+                                    sup = scr.find('sup').text
+                                    if len(sup) == 0:
+                                        score = scr.text
+                                        away_score += score
+                                        away_score += ' '
+                                    else:
+                                        scr.sup.decompose()
+                                        score = scr.text
+                                        away_score += score
+                                        away_score += '^' + sup
+                                        away_score += ' '
+                                # Store all extracted details
                                 lt_details[name]['live_lt'][i] = {}
                                 lt_details[name]['live_lt'][i]['time'] = time
                                 lt_details[name]['live_lt'][i]['home'] = home
@@ -396,6 +615,7 @@ class WebPageMonitor(BaseModel):
                                 lt_details[name]['live_lt'][i]['away'] = away
                                 lt_details[name]['live_lt'][i]['away_score'] = away_score
                         i += 1
+                # exit()
                 self.lt[active] = lt_details
 
         else:
@@ -412,3 +632,437 @@ class WebPageMonitor(BaseModel):
             kwargs['selected_sports'] = self.selected_sports
             self.get_live_games(kwargs)
             return (self.lt)
+
+    def football_today(self, arg):
+        """
+        A method to print football games for the day
+        """    
+        if (arg == 'False'):
+            file = './livescores/old_live_football.html'
+            lt_details = {}
+            with open(file, 'r') as fp:
+                file = {'fp': fp}
+                monitor = self.init_BeautifulSoup(**file)
+                header = monitor.find('header', class_='Nd')
+                active = header.find('a', class_='isActive')
+                active = active.find('span', class_='Pd')
+                active = active.text
+                cen_content = monitor.find('div',  class_='ea', id='content-center')
+                live_games = cen_content.find('div', class_="na")
+                lt = live_games.find_all('div', class_=re.compile('lb'))
+                for div in lt:
+                    spans = div.find_all('span')
+                    try:
+                        name = '{} - {}'.format(spans[1].text, spans[2].text)
+                    except Exception as e:
+                        continue
+                    date = '{}'.format(spans[3].text)
+                    lt_details[name] = {}
+                    lt_details[name]['date'] = date
+                    lt_details[name]['name'] = name
+                    lt_details[name]['live_lt'] = {}
+                    i = 1
+                    for sib in div.next_siblings:
+                        if sib.get('class')[0] == 'pa':
+                            continue
+                        if sib.get('class')[0] == 'lb':
+                            # new lt
+                            break
+                        else:
+                            time = sib.find('span', class_=re.compile('ch Yg'))
+                            time = time.text
+                            home = sib.find('span', class_='di').text
+                            home_score = sib.find('span', class_='gi').text
+                            away = sib.find('span', class_='ci').next.text
+                            away_score = sib.find('span', class_='hi').text
+                            lt_details[name]['live_lt'][i] = {}
+                            lt_details[name]['live_lt'][i]['time'] = time
+                            lt_details[name]['live_lt'][i]['home'] = home
+                            lt_details[name]['live_lt'][i]['home_score'] = home_score
+                            lt_details[name]['live_lt'][i]['away'] = away
+                            lt_details[name]['live_lt'][i]['away_score'] = away_score
+                        i += 1
+            return (lt_details)
+        elif (arg == 'True'):
+            url = "https://www.livescores.com/football/?tz=-7"
+            lt_details = {}
+            response = requests.get(url)
+            file = {'fp': response.content}
+            monitor = self.init_BeautifulSoup(**file)
+            header = monitor.find('header', class_='Nd')
+            active = header.find('a', class_='isActive')
+            active = active.find('span', class_='Pd')
+            active = active.text
+            cen_content = monitor.find('div',  class_='ea', id='content-center')
+            live_games = cen_content.find('div', class_="na")
+            lt = live_games.find_all('div', class_=re.compile('lb'))
+            for div in lt:
+                spans = div.find_all('span')
+                try:
+                    name = '{} - {}'.format(spans[1].text, spans[2].text)
+                except Exception as e:
+                    continue
+                date = '{}'.format(spans[3].text)
+                lt_details[name] = {}
+                lt_details[name]['date'] = date
+                lt_details[name]['name'] = name
+                lt_details[name]['live_lt'] = {}
+                i = 1
+                for sib in div.next_siblings:
+                    if sib.get('class')[0] == 'pa':
+                        continue
+                    if sib.get('class')[0] == 'lb':
+                        # new lt
+                        break
+                    else:
+                        time = sib.find('span', class_=re.compile('ch Yg'))
+                        time = time.text
+                        home = sib.find('span', class_='di').text
+                        home_score = sib.find('span', class_=re.compile('gi')).text
+                        away = sib.find('span', class_='ci').next.text
+                        away_score = sib.find('span', class_='hi').text
+                        lt_details[name]['live_lt'][i] = {}
+                        lt_details[name]['live_lt'][i]['time'] = time
+                        lt_details[name]['live_lt'][i]['home'] = home
+                        lt_details[name]['live_lt'][i]['home_score'] = home_score
+                        lt_details[name]['live_lt'][i]['away'] = away
+                        lt_details[name]['live_lt'][i]['away_score'] = away_score
+                    i += 1
+            return (lt_details)
+        else:
+            return None
+        
+    def football_live(self, arg):
+        """
+        A method to get football live games
+        """
+        if (arg == "False"):
+            print("offline live football")
+        elif (arg == "True"):
+            url = "https://www.livescores.com/football/live/?tz=-7"
+            lt_details = {}
+            response = requests.get(url)
+            file = {'fp': response.content}
+            monitor = self.init_BeautifulSoup(**file)
+            header = monitor.find('header', class_='Nd')
+            active = header.find('a', class_='isActive')
+            active = active.find('span', class_='Pd')
+            active = active.text
+            cen_content = monitor.find('div',  class_='ea', id='content-center')
+            live_games = cen_content.find('div', class_="na")
+            lt = live_games.find_all('div', class_=re.compile('lb'))
+            for div in lt:
+                spans = div.find_all('span')
+                try:
+                    name = '{} - {}'.format(spans[1].text, spans[2].text)
+                except Exception as e:
+                    continue
+                date = '{}'.format(spans[3].text)
+                lt_details[name] = {}
+                lt_details[name]['date'] = date
+                lt_details[name]['name'] = name
+                lt_details[name]['live_lt'] = {}
+                i = 1
+                for sib in div.next_siblings:
+                    spans = div.find_all('span')
+                    try:
+                        name = '{} - {}'.format(spans[1].text, spans[2].text)
+                    except Exception as e:
+                        continue
+                    if sib.get('class')[0] == 'pa':
+                        continue
+                    if sib.get('class')[0] == 'lb':
+                        # new lt
+                        break
+                    else:
+                        time = sib.find('span', class_=re.compile('ch Yg'))
+                        time = time.text
+                        home = sib.find('span', class_='di').text
+                        home_score = sib.find('span', class_=re.compile('gi')).text
+                        away = sib.find('span', class_='ci').next.text
+                        away_score = sib.find('span', class_='hi').text
+                        lt_details[name]['live_lt'][i] = {}
+                        lt_details[name]['live_lt'][i]['time'] = time
+                        lt_details[name]['live_lt'][i]['home'] = home
+                        lt_details[name]['live_lt'][i]['home_score'] = home_score
+                        lt_details[name]['live_lt'][i]['away'] = away
+                        lt_details[name]['live_lt'][i]['away_score'] = away_score
+                    i += 1
+            return (lt_details)
+        else:
+            return (None)
+        
+    def basketball_live(self, arg):
+        """
+        A method to get live basketball games
+        """
+        if (arg == "Fasle"):
+            print("Offline live basketball")
+        elif (arg == "True"):
+            url = "https://www.livescores.com/basketball/live/?tz=-7"
+            lt_details = {}
+            response = requests.get(url)
+            file = {'fp': response.content}
+            monitor = self.init_BeautifulSoup(**file)
+            header = monitor.find('header', class_='Nd')
+            active = header.find('a', class_='isActive')
+            active = active.find('span', class_='Pd')
+            active = active.text
+            cen_content = monitor.find('div',  class_='ea', id='content-center')
+            live_games = cen_content.find('div', class_="na")
+            lt = live_games.find_all('div', class_=re.compile('lb'))
+            for div in lt:
+                spans = div.find_all('span')
+                try:
+                    name = '{} - {}'.format(spans[1].text, spans[2].text)
+                except Exception as e:
+                    continue
+                date = '{}'.format(spans[3].text)
+                lt_details[name] = {}
+                lt_details[name]['date'] = date
+                lt_details[name]['name'] = name
+                lt_details[name]['live_lt'] = {}
+                i = 1
+                for sib in div.next_siblings:
+                    if sib.get('class')[0] == 'pa':
+                        continue
+                    if sib.get('class')[0] == 'lb':
+                        # new lt
+                        break
+                    else:
+                        time = sib.find('span', class_=re.compile('ch Yg')).text
+                        ht = sib.find('div', class_='Qf')
+                        home = ht.text
+                        away = ht.next_sibling.text
+                        hsas = sib.find('div', class_=re.compile('Mf Nf'))
+                        home_score = ''
+                        away_score = ''
+                        try:
+                            home_score += hsas.contents[0].text
+                        except Exception as e:
+                            continue
+                        away_score += hsas.contents[1].text
+                        bt_score = sib.find('div', class_='Kf')
+                        for score in bt_score.contents[0]:
+                            home_score += score.text
+                        for score in bt_score.contents[1]:
+                            away_score += score.text
+                        lt_details[name]['live_lt'][i] = {}
+                        lt_details[name]['live_lt'][i]['time'] = time
+                        lt_details[name]['live_lt'][i]['home'] = home
+                        lt_details[name]['live_lt'][i]['home_score'] = home_score
+                        lt_details[name]['live_lt'][i]['away'] = away
+                        lt_details[name]['live_lt'][i]['away_score'] = away_score
+                    i += 1
+            return (lt_details)
+        else:
+            return (None)
+        
+    def basketball_today(self, arg):
+        """
+        A method to get today games for basketball
+        """
+        if (arg == "False"):
+            print("offline basketball today")
+        elif (arg == "True"):
+            url = "https://www.livescores.com/basketball/?tz=-7"
+            lt_details = {}
+            response = requests.get(url)
+            file = {'fp': response.content}
+            monitor = self.init_BeautifulSoup(**file)
+            header = monitor.find('header', class_='Nd')
+            active = header.find('a', class_='isActive')
+            active = active.find('span', class_='Pd')
+            active = active.text
+            cen_content = monitor.find('div',  class_='ea', id='content-center')
+            live_games = cen_content.find('div', class_="na")
+            lt = live_games.find_all('div', class_=re.compile('lb'))
+            for div in lt:
+                spans = div.find_all('span')
+                try:
+                    name = '{} - {}'.format(spans[1].text, spans[2].text)
+                except Exception as e:
+                    continue
+                date = '{}'.format(spans[3].text)
+                lt_details[name] = {}
+                lt_details[name]['date'] = date
+                lt_details[name]['name'] = name
+                lt_details[name]['live_lt'] = {}
+                i = 1
+                for sib in div.next_siblings:
+                    if sib.get('class')[0] == 'pa':
+                        continue
+                    if sib.get('class')[0] == 'lb':
+                        # new lt
+                        break
+                    else:
+                        time = sib.find('span', class_=re.compile('ch Yg')).text
+                        ht = sib.find('div', class_='Qf')
+                        home = ht.text
+                        away = ht.next_sibling.text
+                        hsas = sib.find('div', class_=re.compile('Mf Nf'))
+                        home_score = ''
+                        away_score = ''
+                        try:
+                            home_score += hsas.contents[0].text
+                        except Exception as e:
+                            continue
+                        away_score += hsas.contents[1].text
+                        bt_score = sib.find('div', class_='Kf')
+                        for score in bt_score.contents[0]:
+                            home_score += score.text
+                        for score in bt_score.contents[1]:
+                            away_score += score.text
+                        lt_details[name]['live_lt'][i] = {}
+                        lt_details[name]['live_lt'][i]['time'] = time
+                        lt_details[name]['live_lt'][i]['home'] = home
+                        lt_details[name]['live_lt'][i]['home_score'] = home_score
+                        lt_details[name]['live_lt'][i]['away'] = away
+                        lt_details[name]['live_lt'][i]['away_score'] = away_score
+                    i += 1
+            return (lt_details)
+        else:
+            return (None)
+
+    def hockey_today(self, arg):
+        """
+        A method used to get today hockey games.
+        """
+        if (arg == 'False'):
+            print("Offline hockey gemas")
+        elif (arg == 'True'):
+            url = "https://www.livescores.com/hockey/?tz=-7"
+            lt_details = {}
+            response = requests.get(url)
+            file = {'fp': response.content}
+            monitor = self.init_BeautifulSoup(**file)
+            header = monitor.find('header', class_='Nd')
+            active = header.find('a', class_='isActive')
+            active = active.find('span', class_='Pd')
+            active = active.text
+            cen_content = monitor.find('div',  class_='ea', id='content-center')
+            live_games = cen_content.find('div', class_="na")
+            lt = live_games.find_all('div', class_=re.compile('lb'))
+            for div in lt:
+                spans = div.find_all('span')
+                try:
+                    name = '{} - {}'.format(spans[1].text, spans[2].text)
+                except Exception as e:
+                    continue
+                date = '{}'.format(spans[3].text)
+                lt_details[name] = {}
+                lt_details[name]['date'] = date
+                lt_details[name]['name'] = name
+                lt_details[name]['live_lt'] = {}
+                i = 1
+                for sib in div.next_siblings:
+                    if sib.get('class')[0] == 'pa':
+                        continue
+                    if sib.get('class')[0] == 'lb':
+                        # new lt
+                        break
+                    else:
+                        time = sib.find('span', class_=re.compile('ch Yg')).text
+                        ht = sib.find('div', class_='Qf')
+                        home = ht.text
+                        away = ht.next_sibling.text
+                        home_score = ''
+                        away_score = ''
+                        hsas = sib.find('div', class_=re.compile('Mf Nf'))
+                        try:
+                            home_score += hsas.contents[0].text
+                        except Exception as e:
+                            continue
+                        away_score += hsas.contents[1].text
+                        bt_score = sib.find('div', class_='Kf')
+                        for score in bt_score.contents[0]:
+                            home_score += score.text
+                        for score in bt_score.contents[1]:
+                            away_score += score.text
+                        lt_details[name]['live_lt'][i] = {}
+                        lt_details[name]['live_lt'][i]['time'] = time
+                        lt_details[name]['live_lt'][i]['home'] = home
+                        lt_details[name]['live_lt'][i]['home_score'] = home_score
+                        lt_details[name]['live_lt'][i]['away'] = away
+                        lt_details[name]['live_lt'][i]['away_score'] = away_score
+                    i += 1
+            return (lt_details)
+        else:
+            return (None)
+
+    def hockey_live(self, arg):
+        """
+        A method used to get live hockey games
+        """
+        if (arg == "False"):
+            print("Offline hockey")
+        elif (arg == "True"):
+            url = "https://www.livescores.com/hockey/live/?tz=-7"
+            lt_details = {}
+            response = requests.get(url)
+            file = {'fp': response.content}
+            monitor = self.init_BeautifulSoup(**file)
+            header = monitor.find('header', class_='Nd')
+            active = header.find('a', class_='isActive')
+            active = active.find('span', class_='Pd')
+            active = active.text
+            cen_content = monitor.find('div',  class_='ea', id='content-center')
+            live_games = cen_content.find('div', class_="na")
+            lt = live_games.find_all('div', class_=re.compile('lb'))
+            for div in lt:
+                spans = div.find_all('span')
+                try:
+                    name = '{} - {}'.format(spans[1].text, spans[2].text)
+                except Exception as e:
+                    continue
+                date = '{}'.format(spans[3].text)
+                lt_details[name] = {}
+                lt_details[name]['date'] = date
+                lt_details[name]['name'] = name
+                lt_details[name]['live_lt'] = {}
+                i = 1
+                for sib in div.next_siblings:
+                    if sib.get('class')[0] == 'pa':
+                        continue
+                    if sib.get('class')[0] == 'lb':
+                        # new lt
+                        break
+                    else:
+                        time = sib.find('span', class_=re.compile('ch Yg')).text
+                        ht = sib.find('div', class_='Qf')
+                        home = ht.text
+                        away = ht.next_sibling.text
+                        home_score = ''
+                        away_score = ''
+                        hsas = sib.find('div', class_=re.compile('Mf Nf'))
+                        try:
+                            home_score += hsas.contents[0].text
+                        except Exception as e:
+                            continue
+                        away_score += hsas.contents[1].text
+                        bt_score = sib.find('div', class_='Kf')
+                        for score in bt_score.contents[0]:
+                            home_score += score.text
+                        for score in bt_score.contents[1]:
+                            away_score += score.text
+                        lt_details[name]['live_lt'][i] = {}
+                        lt_details[name]['live_lt'][i]['time'] = time
+                        lt_details[name]['live_lt'][i]['home'] = home
+                        lt_details[name]['live_lt'][i]['home_score'] = home_score
+                        lt_details[name]['live_lt'][i]['away'] = away
+                        lt_details[name]['live_lt'][i]['away_score'] = away_score
+                    i += 1
+            return (lt_details)
+        else:
+            return (None)
+
+    def tennis_today(self, arg):
+        """
+        A method used to get today games for tennis.
+        """
+        if (arg == "False"):
+            print("offline games for tennis")
+        elif (arg == "True"):
+            print("online for tennis")
+        else:
+            return (None)
