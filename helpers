@@ -1,0 +1,14 @@
+# register a new user
+curl -XPOST localhost:5000/api/v1/users -d 'email=zeus@gmail.com' -d 'password=password' -v
+
+# get user session
+curl -XPOST localhost:5000/api/v1/sessions -d 'email=zeus@gmail.com' -d 'password=password' -v
+
+# get a user by session id
+curl -XGET localhost:5000/api/v1/profile -b "session_id=ID"
+
+# log a user out
+curl -XDELETE localhost:5000/api/v1/sessions -d "session_id=id"
+
+# sport api
+curl  http://172.18.29.71:5000/api/v1/football_today

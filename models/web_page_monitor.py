@@ -132,20 +132,6 @@ class WebPageMonitor(BaseModel):
             return (self.selected_sports)
         else:
             return (None)
-
-    def select_all_available_sports2(self, **args):
-        """
-        A method used to select all available sports
-        """
-        print(args)
-        if (args['online'] == 'False'):
-            with open(args['file2'], 'r')as fp:
-                args = {'fp': fp}
-                monitor = self.init_BeautifulSoup(**args)
-                print(monitor)
-        elif (args['online'] == 'True'):
-            for key, value in self.sports.items():
-                print("{}: {}".format(key, value))
         
     
     def get_selected_sports(self):
@@ -949,9 +935,15 @@ class WebPageMonitor(BaseModel):
                         lt_details[name]['live_lt'][i] = {}
                         lt_details[name]['live_lt'][i]['time'] = time
                         lt_details[name]['live_lt'][i]['home'] = home
-                        lt_details[name]['live_lt'][i]['home_score'] = home_score
+                        if (home_score == "\u00a0(\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0)"):
+                            lt_details[name]['live_lt'][i]['home_score'] = ()
+                        else:
+                            lt_details[name]['live_lt'][i]['home_score'] = home_score
                         lt_details[name]['live_lt'][i]['away'] = away
-                        lt_details[name]['live_lt'][i]['away_score'] = away_score
+                        if (away_score == "\u00a0(\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0)"):
+                            lt_details[name]['live_lt'][i]['away_score'] = ()
+                        else:
+                            lt_details[name]['live_lt'][i]['away_score'] = away_score
                     i += 1
             return (lt_details)
         else:

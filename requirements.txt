@@ -6,3 +6,5 @@ webencodings==0.5.1
 requests
 tabulate
 lxml
+bcrypt
+sqlalchemy
