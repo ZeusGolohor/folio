@@ -65,10 +65,10 @@ class GUZECommand(cmd.Cmd):
                 else:
                     try:
                         value = int(value)
-                    except:
+                    except Exception:
                         try:
                             value = float(value)
-                        except:
+                        except Exception:
                             continue
                 new_dict[key] = value
         return new_dict
@@ -261,28 +261,28 @@ class GUZECommand(cmd.Cmd):
                 table = []
                 new_sport = []
                 new_sport.append(key)
-                new_sport.append(value['name'])
+                new_sport.append(value["name"])
                 table.append(new_sport)
                 print(tabulate(table, headers, tablefmt="grid"))
-                key2 = result.get(value['name'])
+                key2 = result.get(value["name"])
                 if key2:
                     for key3, value3 in key2.items():
                         headers2 = ["League or Tournament", "Date"]
                         table2 = []
                         new_lt = []
                         new_lt.append(key3)
-                        new_lt.append(value3['date'])
+                        new_lt.append(value3["date"])
                         table2.append(new_lt)
                         print(tabulate(table2, headers2, tablefmt="grid"))
                         headers3 = ["Time", "Team", "Score", "Score", "Team"]
                         table3 = []
-                        for key4, value4 in value3['live_lt'].items():
+                        for key4, value4 in value3["live_lt"].items():
                             new_match = []
-                            new_match.append(value4['time'])
-                            new_match.append(value4['home'])
-                            new_match.append(value4['home_score'])
-                            new_match.append(value4['away_score'])
-                            new_match.append(value4['away'])
+                            new_match.append(value4["time"])
+                            new_match.append(value4["home"])
+                            new_match.append(value4["home_score"])
+                            new_match.append(value4["away_score"])
+                            new_match.append(value4["away"])
                             table3.append(new_match)
                         print(tabulate(table3, headers3, tablefmt="grid"))
                         print()
@@ -298,7 +298,6 @@ class GUZECommand(cmd.Cmd):
                     print(tabulate(table2, headers, tablefmt="grid"))
                     print()
         else:
-            print("no sports")
             self.do_all_monitored_sports(arg)
 
     def do_add_lt(self, arg):
@@ -342,42 +341,9 @@ class GUZECommand(cmd.Cmd):
         A method to print football games for the day
         """
         result = self.instance.football_today(self.online)
-        if (result):
-            # for key, value in result.items():
-            #     headers = ["League or Tournament", "Date"]
-            #     table = []
-            #     new_lt = []
-            #     new_lt.append(value["name"])
-            #     new_lt.append(value["date"])
-            #     table.append(new_lt)
-            #     print(tabulate(table, headers, tablefmt="grid"))
-            #     headers2 = ["Time", "Home", "Score", "Score", "Away"]
-            #     table2 = []
-            #     for key1, value1 in value["live_lt"].items():
-            #         # print(key1, value1)
-            #         new_lt2 = []
-            #         new_lt2.append(value1["time"])
-            #         new_lt2.append(value1["home"])
-            #         new_lt2.append(value1["home_score"])
-            #         new_lt2.append(value1["away_score"])
-            #         new_lt2.append(value1["away"])
-            #         table2.append(new_lt2)
-            #     print(tabulate(table2, headers2, tablefmt="grid"))
-            #     print()
-            #     print()
-                self.print_console_result_table(result)
+        if result:
+            self.print_console_result_table(result)
         else:
-            # headers = ["Number", "League or Tornament", "Sport", "Date"]
-            # table2 = []
-            # new_lt = []
-            # new_lt.append("NO")
-            # new_lt.append("SPORT")
-            # new_lt.append("TODAY FOR")
-            # new_lt.append("Football")
-            # table2.append(new_lt)
-            # print(tabulate(table2, headers, tablefmt="grid"))
-            # print()
-            # print()
             self.print_console_error_table("FOOTBALL")
 
     def do_football_live(self, arg):
@@ -385,42 +351,9 @@ class GUZECommand(cmd.Cmd):
         A method to get football live games
         """
         result = self.instance.football_live(self.online)
-        if (result):
-            # for key, value in result.items():
-            #     headers = ["League or Tournament", "Date"]
-            #     table = []
-            #     new_lt = []
-            #     new_lt.append(value["name"])
-            #     new_lt.append(value["date"])
-            #     table.append(new_lt)
-            #     print(tabulate(table, headers, tablefmt="grid"))
-            #     headers2 = ["Time", "Home", "Score", "Score", "Away"]
-            #     table2 = []
-            #     for key1, value1 in value["live_lt"].items():
-            #         # print(key1, value1)
-            #         new_lt2 = []
-            #         new_lt2.append(value1["time"])
-            #         new_lt2.append(value1["home"])
-            #         new_lt2.append(value1["home_score"])
-            #         new_lt2.append(value1["away_score"])
-            #         new_lt2.append(value1["away"])
-            #         table2.append(new_lt2)
-            #     print(tabulate(table2, headers2, tablefmt="grid"))
-            #     print()
-            #     print()
-                self.print_console_result_table(result)
+        if result:
+            self.print_console_result_table(result)
         else:
-            # headers = ["Number", "League or Tornament", "Sport", "Date"]
-            # table2 = []
-            # new_lt = []
-            # new_lt.append("NO LIVE")
-            # new_lt.append("SPORT")
-            # new_lt.append("AT THE MOMENT FOR")
-            # new_lt.append("FOOTBALL")
-            # table2.append(new_lt)
-            # print(tabulate(table2, headers, tablefmt="grid"))
-            # print()
-            # print()
             self.print_console_error_table("FOOTBALL")
 
     def do_basketball_live(self, arg):
@@ -428,42 +361,9 @@ class GUZECommand(cmd.Cmd):
         A method to get live basketball games
         """
         result = self.instance.basketball_live(self.online)
-        if (result):
-            # for key, value in result.items():
-            #     headers = ["League or Tournament", "Date"]
-            #     table = []
-            #     new_lt = []
-            #     new_lt.append(value["name"])
-            #     new_lt.append(value["date"])
-            #     table.append(new_lt)
-            #     print(tabulate(table, headers, tablefmt="grid"))
-            #     headers2 = ["Time", "Home", "Score", "Score", "Away"]
-            #     table2 = []
-            #     for key1, value1 in value["live_lt"].items():
-            #         # print(key1, value1)
-            #         new_lt2 = []
-            #         new_lt2.append(value1["time"])
-            #         new_lt2.append(value1["home"])
-            #         new_lt2.append(value1["home_score"])
-            #         new_lt2.append(value1["away_score"])
-            #         new_lt2.append(value1["away"])
-            #         table2.append(new_lt2)
-            #     print(tabulate(table2, headers2, tablefmt="grid"))
-            #     print()
-            #     print()
-                self.print_console_result_table(result)
+        if result:
+            self.print_console_result_table(result)
         else:
-            # headers = ["Number", "League or Tornament", "Sport", "Date"]
-            # table2 = []
-            # new_lt = []
-            # new_lt.append("NO LIVE")
-            # new_lt.append("SPORT")
-            # new_lt.append("AT THE MOMENT FOR")
-            # new_lt.append("BASKETBALL")
-            # table2.append(new_lt)
-            # print(tabulate(table2, headers, tablefmt="grid"))
-            # print()
-            # print()
             self.print_console_error_table("BASKETBALL")
 
     def do_basketball_today(self, arg):
@@ -471,42 +371,9 @@ class GUZECommand(cmd.Cmd):
         A method to get today games for basketball
         """
         result = self.instance.basketball_today(self.online)
-        if (result):
-            # for key, value in result.items():
-            #     headers = ["League or Tournament", "Date"]
-            #     table = []
-            #     new_lt = []
-            #     new_lt.append(value["name"])
-            #     new_lt.append(value["date"])
-            #     table.append(new_lt)
-            #     print(tabulate(table, headers, tablefmt="grid"))
-            #     headers2 = ["Time", "Home", "Score", "Score", "Away"]
-            #     table2 = []
-            #     for key1, value1 in value["live_lt"].items():
-            #         # print(key1, value1)
-            #         new_lt2 = []
-            #         new_lt2.append(value1["time"])
-            #         new_lt2.append(value1["home"])
-            #         new_lt2.append(value1["home_score"])
-            #         new_lt2.append(value1["away_score"])
-            #         new_lt2.append(value1["away"])
-            #         table2.append(new_lt2)
-            #     print(tabulate(table2, headers2, tablefmt="grid"))
-            #     print()
-            #     print()
-                self.print_console_result_table(result)
+        if result:
+            self.print_console_result_table(result)
         else:
-            # headers = ["Number", "League or Tornament", "Sport", "Date"]
-            # table2 = []
-            # new_lt = []
-            # new_lt.append("NO")
-            # new_lt.append("SPORT")
-            # new_lt.append("TODAY FOR")
-            # new_lt.append("BASKETBALL")
-            # table2.append(new_lt)
-            # print(tabulate(table2, headers, tablefmt="grid"))
-            # print()
-            # print()
             self.print_console_error_table("BASKETBALL")
 
     def do_hockey_today(self, arg):
@@ -514,42 +381,9 @@ class GUZECommand(cmd.Cmd):
         A method used to get today hockey games.
         """
         result = self.instance.hockey_today(self.online)
-        if (result):
-            # for key, value in result.items():
-            #     headers = ["League or Tournament", "Date"]
-            #     table = []
-            #     new_lt = []
-            #     new_lt.append(value["name"])
-            #     new_lt.append(value["date"])
-            #     table.append(new_lt)
-            #     print(tabulate(table, headers, tablefmt="grid"))
-            #     headers2 = ["Time", "Home", "Score", "Score", "Away"]
-            #     table2 = []
-            #     for key1, value1 in value["live_lt"].items():
-            #         # print(key1, value1)
-            #         new_lt2 = []
-            #         new_lt2.append(value1["time"])
-            #         new_lt2.append(value1["home"])
-            #         new_lt2.append(value1["home_score"])
-            #         new_lt2.append(value1["away_score"])
-            #         new_lt2.append(value1["away"])
-            #         table2.append(new_lt2)
-            #     print(tabulate(table2, headers2, tablefmt="grid"))
-            #     print()
-            #     print()
-                self.print_console_result_table(result)
+        if result:
+            self.print_console_result_table(result)
         else:
-            # headers = ["Number", "League or Tornament", "Sport", "Date"]
-            # table2 = []
-            # new_lt = []
-            # new_lt.append("NO")
-            # new_lt.append("SPORT")
-            # new_lt.append("TODAY FOR")
-            # new_lt.append("HOCKEY")
-            # table2.append(new_lt)
-            # print(tabulate(table2, headers, tablefmt="grid"))
-            # print()
-            # print()
             self.print_console_error_table("HOCKEY")
 
     def do_hockey_live(self, arg):
@@ -557,42 +391,9 @@ class GUZECommand(cmd.Cmd):
         A method to get live hockey games.
         """
         result = self.instance.hockey_live(self.online)
-        if (result):
-            # for key, value in result.items():
-            #     headers = ["League or Tournament", "Date"]
-            #     table = []
-            #     new_lt = []
-            #     new_lt.append(value["name"])
-            #     new_lt.append(value["date"])
-            #     table.append(new_lt)
-            #     print(tabulate(table, headers, tablefmt="grid"))
-            #     headers2 = ["Time", "Home", "Score", "Score", "Away"]
-            #     table2 = []
-            #     for key1, value1 in value["live_lt"].items():
-            #         # print(key1, value1)
-            #         new_lt2 = []
-            #         new_lt2.append(value1["time"])
-            #         new_lt2.append(value1["home"])
-            #         new_lt2.append(value1["home_score"])
-            #         new_lt2.append(value1["away_score"])
-            #         new_lt2.append(value1["away"])
-            #         table2.append(new_lt2)
-            #     print(tabulate(table2, headers2, tablefmt="grid"))
-            #     print()
-            #     print()
-                self.print_console_result_table(result)
+        if result:
+            self.print_console_result_table(result)
         else:
-            # headers = ["Number", "League or Tornament", "Sport", "Date"]
-            # table2 = []
-            # new_lt = []
-            # new_lt.append("NO")
-            # new_lt.append("SPORT")
-            # new_lt.append("AT THE MOMENT FOR")
-            # new_lt.append("HOCKEY")
-            # table2.append(new_lt)
-            # print(tabulate(table2, headers, tablefmt="grid"))
-            # print()
-            # print()
             self.print_console_error_table("HOCKEY")
 
     def do_tennis_today(self, arg):
@@ -600,42 +401,9 @@ class GUZECommand(cmd.Cmd):
         A method used to get today games for tennis
         """
         result = self.instance.tennis_today(self.online)
-        if (result):
-            # for key, value in result.items():
-            #     headers = ["League or Tournament", "Date"]
-            #     table = []
-            #     new_lt = []
-            #     new_lt.append(value["name"])
-            #     new_lt.append(value["date"])
-            #     table.append(new_lt)
-            #     print(tabulate(table, headers, tablefmt="grid"))
-            #     headers2 = ["Time", "Home", "Score", "Score", "Away"]
-            #     table2 = []
-            #     for key1, value1 in value["live_lt"].items():
-            #         # print(key1, value1)
-            #         new_lt2 = []
-            #         new_lt2.append(value1["time"])
-            #         new_lt2.append(value1["home"])
-            #         new_lt2.append(value1["home_score"])
-            #         new_lt2.append(value1["away_score"])
-            #         new_lt2.append(value1["away"])
-            #         table2.append(new_lt2)
-            #     print(tabulate(table2, headers2, tablefmt="grid"))
-            #     print()
-            #     print()
-                self.print_console_result_table(result)
+        if result:
+            self.print_console_result_table(result)
         else:
-            # headers = ["Number", "League or Tornament", "Sport", "Date"]
-            # table2 = []
-            # new_lt = []
-            # new_lt.append("NO")
-            # new_lt.append("SPORT")
-            # new_lt.append("TODAY FOR")
-            # new_lt.append("HOCKEY")
-            # table2.append(new_lt)
-            # print(tabulate(table2, headers, tablefmt="grid"))
-            # print()
-            # print()
             self.print_console_error_table("TENNIS")
 
     def do_tennis_live(self, arg):
@@ -643,42 +411,9 @@ class GUZECommand(cmd.Cmd):
         A method to get live games for tennis.
         """
         result = self.instance.tennis_live(self.online)
-        if (result):
-            # for key, value in result.items():
-            #     headers = ["League or Tournament", "Date"]
-            #     table = []
-            #     new_lt = []
-            #     new_lt.append(value["name"])
-            #     new_lt.append(value["date"])
-            #     table.append(new_lt)
-            #     print(tabulate(table, headers, tablefmt="grid"))
-            #     headers2 = ["Time", "Home", "Score", "Score", "Away"]
-            #     table2 = []
-            #     for key1, value1 in value["live_lt"].items():
-            #         # print(key1, value1)
-            #         new_lt2 = []
-            #         new_lt2.append(value1["time"])
-            #         new_lt2.append(value1["home"])
-            #         new_lt2.append(value1["home_score"])
-            #         new_lt2.append(value1["away_score"])
-            #         new_lt2.append(value1["away"])
-            #         table2.append(new_lt2)
-            #     print(tabulate(table2, headers2, tablefmt="grid"))
-            #     print()
-            #     print()
-                self.print_console_result_table(result)
+        if result:
+            self.print_console_result_table(result)
         else:
-            # headers = ["Number", "League or Tornament", "Sport", "Date"]
-            # table2 = []
-            # new_lt = []
-            # new_lt.append("NO")
-            # new_lt.append("SPORT")
-            # new_lt.append("TODAY FOR")
-            # new_lt.append("HOCKEY")
-            # table2.append(new_lt)
-            # print(tabulate(table2, headers, tablefmt="grid"))
-            # print()
-            # print()
             self.print_console_error_table("TENNIS")
 
     def do_cricket_today(self, arg):
@@ -686,42 +421,9 @@ class GUZECommand(cmd.Cmd):
         A method to get today games for cricket
         """
         result = self.instance.cricket_today(self.online)
-        if (result):
-            # for key, value in result.items():
-            #     headers = ["League or Tournament", "Date"]
-            #     table = []
-            #     new_lt = []
-            #     new_lt.append(value["name"])
-            #     new_lt.append(value["date"])
-            #     table.append(new_lt)
-            #     print(tabulate(table, headers, tablefmt="grid"))
-            #     headers2 = ["Time", "Home", "Score", "Score", "Away"]
-            #     table2 = []
-            #     for key1, value1 in value["live_lt"].items():
-            #         # print(key1, value1)
-            #         new_lt2 = []
-            #         new_lt2.append(value1["time"])
-            #         new_lt2.append(value1["home"])
-            #         new_lt2.append(value1["home_score"])
-            #         new_lt2.append(value1["away_score"])
-            #         new_lt2.append(value1["away"])
-            #         table2.append(new_lt2)
-            #     print(tabulate(table2, headers2, tablefmt="grid"))
-            #     print()
-            #     print()
-                self.print_console_result_table(result)
+        if result:
+            self.print_console_result_table(result)
         else:
-            # headers = ["Number", "League or Tornament", "Sport", "Date"]
-            # table2 = []
-            # new_lt = []
-            # new_lt.append("NO")
-            # new_lt.append("SPORT")
-            # new_lt.append("TODAY FOR")
-            # new_lt.append("CRICKET")
-            # table2.append(new_lt)
-            # print(tabulate(table2, headers, tablefmt="grid"))
-            # print()
-            # print()
             self.print_console_error_table("CRICKET")
 
     def do_cricket_live(self, arg):
@@ -729,11 +431,10 @@ class GUZECommand(cmd.Cmd):
         A method used to get live cricket games.
         """
         result = self.instance.cricket_live(self.online)
-        if (result):
+        if result:
             self.print_console_result_table(result)
         else:
             self.print_console_error_table("CRICKET")
-
 
 
 if __name__ == "__main__":
