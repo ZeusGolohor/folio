@@ -67,7 +67,8 @@ class WebPageMonitor(BaseModel):
                     response = requests.get(kwargs['url'])
                     file = {'fp': response.content}
                     monitor = self.init_BeautifulSoup(**file)
-                    header = monitor.find('header', class_='Nd')
+                    # header = monitor.find('header', class_='Nd')
+                    header = monitor.find('header', class_='Yd')
                     i = 1
                     for child in header.contents:
                         if (i > 5):
@@ -642,6 +643,7 @@ class WebPageMonitor(BaseModel):
             with open(file, 'r') as fp:
                 file = {'fp': fp}
                 monitor = self.init_BeautifulSoup(**file)
+                # header = monitor.find('header', class_='Nd')
                 header = monitor.find('header', class_='Nd')
                 active = header.find('a', class_='isActive')
                 active = active.find('span', class_='Pd')
@@ -693,13 +695,17 @@ class WebPageMonitor(BaseModel):
                 return (None)
             file = {'fp': response.content}
             monitor = self.init_BeautifulSoup(**file)
-            header = monitor.find('header', class_='Nd')
+            # header = monitor.find('header', class_='Nd')
+            header = monitor.find('header', class_='Yd')
             active = header.find('a', class_='isActive')
-            active = active.find('span', class_='Pd')
+            active = active.find('span', class_='ae')
             active = active.text
-            cen_content = monitor.find('div',  class_='ea', id='content-center')
-            live_games = cen_content.find('div', class_="na")
-            lt = live_games.find_all('div', class_=re.compile('lb'))
+            # cen_content = monitor.find('div',  class_='ea', id='content-center')
+            cen_content = monitor.find('div',  class_='ha', id='content-center')
+            # live_games = cen_content.find('div', class_="na")
+            live_games = cen_content.find('div', class_="Aa")
+            # lt = live_games.find_all('div', class_=re.compile('lb'))
+            lt = live_games.find_all('div', class_=re.compile('Wa'))
             for div in lt:
                 spans = div.find_all('span')
                 try:
@@ -713,18 +719,27 @@ class WebPageMonitor(BaseModel):
                 lt_details[name]['live_lt'] = {}
                 i = 1
                 for sib in div.next_siblings:
-                    if sib.get('class')[0] == 'pa':
+                    # if sib.get('class')[0] == 'pa':
+                    if sib.get('class')[0] == 'Ca':
                         continue
-                    if sib.get('class')[0] == 'lb':
+                    # if sib.get('class')[0] == 'lb':
+                    if sib.get('class')[0] == 'Wa':
                         # new lt
                         break
                     else:
-                        time = sib.find('span', class_=re.compile('ch Yg'))
+                        # time = sib.find('span', class_=re.compile('ch Yg'))
+                        # time = time.text
+                        # home = sib.find('span', class_='di').text
+                        # home_score = sib.find('span', class_=re.compile('gi')).text
+                        # away = sib.find('span', class_='ci').next.text
+                        # away_score = sib.find('span', class_='hi').text
+                        time = sib.find('span', class_=re.compile('sg og'))
                         time = time.text
-                        home = sib.find('span', class_='di').text
-                        home_score = sib.find('span', class_=re.compile('gi')).text
-                        away = sib.find('span', class_='ci').next.text
-                        away_score = sib.find('span', class_='hi').text
+                        home = sib.find('span', class_='Xh').span.next
+                        away = sib.find('span', class_='Yh').span.next
+                        scores = sib.find('span', class_='Uh')
+                        home_score = scores.find('span', class_='ci').text
+                        away_score = scores.find('span', class_='di').text
                         lt_details[name]['live_lt'][i] = {}
                         lt_details[name]['live_lt'][i]['time'] = time
                         lt_details[name]['live_lt'][i]['home'] = home
@@ -753,13 +768,18 @@ class WebPageMonitor(BaseModel):
                 return (None)
             file = {'fp': response.content}
             monitor = self.init_BeautifulSoup(**file)
-            header = monitor.find('header', class_='Nd')
+            # header = monitor.find('header', class_='Nd')
+            header = monitor.find('header', class_='Yd')
             active = header.find('a', class_='isActive')
-            active = active.find('span', class_='Pd')
+            # active = active.find('span', class_='Pd')
+            active = active.find('span', class_='ae')
             active = active.text
-            cen_content = monitor.find('div',  class_='ea', id='content-center')
-            live_games = cen_content.find('div', class_="na")
-            lt = live_games.find_all('div', class_=re.compile('lb'))
+            # cen_content = monitor.find('div',  class_='ea', id='content-center')
+            cen_content = monitor.find('div',  class_='ha', id='content-center')
+            # live_games = cen_content.find('div', class_="na")
+            live_games = cen_content.find('div', class_="Aa")
+            # lt = live_games.find_all('div', class_=re.compile('lb'))
+            lt = live_games.find_all('div', class_=re.compile('Wa'))
             for div in lt:
                 spans = div.find_all('span')
                 try:
@@ -778,18 +798,27 @@ class WebPageMonitor(BaseModel):
                         name = '{} - {}'.format(spans[1].text, spans[2].text)
                     except Exception as e:
                         continue
-                    if sib.get('class')[0] == 'pa':
+                    # if sib.get('class')[0] == 'pa':
+                    if sib.get('class')[0] == 'Ca':
                         continue
-                    if sib.get('class')[0] == 'lb':
+                    # if sib.get('class')[0] == 'lb':
+                    if sib.get('class')[0] == 'Wa':
                         # new lt
                         break
                     else:
-                        time = sib.find('span', class_=re.compile('ch Yg'))
+                        # time = sib.find('span', class_=re.compile('ch Yg'))
+                        # time = time.text
+                        # home = sib.find('span', class_='di').text
+                        # home_score = sib.find('span', class_=re.compile('gi')).text
+                        # away = sib.find('span', class_='ci').next.text
+                        # away_score = sib.find('span', class_='hi').text
+                        time = sib.find('span', class_=re.compile('sg og'))
                         time = time.text
-                        home = sib.find('span', class_='di').text
-                        home_score = sib.find('span', class_=re.compile('gi')).text
-                        away = sib.find('span', class_='ci').next.text
-                        away_score = sib.find('span', class_='hi').text
+                        home = sib.find('span', class_=re.compile('Xh')).span.next
+                        away = sib.find('span', class_=re.compile('Yh')).span.next
+                        scores = sib.find('span', class_=re.compile('Uh'))
+                        home_score = scores.find('span', class_=re.compile('ci')).text
+                        away_score = scores.find('span', class_=re.compile('di')).text
                         lt_details[name]['live_lt'][i] = {}
                         lt_details[name]['live_lt'][i]['time'] = time
                         lt_details[name]['live_lt'][i]['home'] = home
@@ -818,13 +847,18 @@ class WebPageMonitor(BaseModel):
                 return (None)
             file = {'fp': response.content}
             monitor = self.init_BeautifulSoup(**file)
-            header = monitor.find('header', class_='Nd')
+            # header = monitor.find('header', class_='Nd')
+            header = monitor.find('header', class_='Yd')
             active = header.find('a', class_='isActive')
-            active = active.find('span', class_='Pd')
+            # active = active.find('span', class_='Pd')
+            active = active.find('span', class_='ae')
             active = active.text
-            cen_content = monitor.find('div',  class_='ea', id='content-center')
-            live_games = cen_content.find('div', class_="na")
-            lt = live_games.find_all('div', class_=re.compile('lb'))
+            # cen_content = monitor.find('div',  class_='ea', id='content-center')
+            cen_content = monitor.find('div',  class_='ha', id='content-center')
+            # live_games = cen_content.find('div', class_="na")
+            live_games = cen_content.find('div', class_="Aa")
+            # lt = live_games.find_all('div', class_=re.compile('lb'))
+            lt = live_games.find_all('div', class_=re.compile('Wa'))
             for div in lt:
                 spans = div.find_all('span')
                 try:
@@ -838,12 +872,16 @@ class WebPageMonitor(BaseModel):
                 lt_details[name]['live_lt'] = {}
                 i = 1
                 for sib in div.next_siblings:
-                    if sib.get('class')[0] == 'pa':
+                    # if sib.get('class')[0] == 'pa':
+                    if sib.get('class')[0] == 'Ca':
                         continue
-                    if sib.get('class')[0] == 'lb':
+                    # if sib.get('class')[0] == 'lb':
+                    if sib.get('class')[0] == 'Wa':
                         # new lt
                         break
                     else:
+                        print("working on it")
+                        exit()
                         time = sib.find('span', class_=re.compile('ch Yg')).text
                         ht = sib.find('div', class_='Qf')
                         home = ht.text
@@ -889,13 +927,18 @@ class WebPageMonitor(BaseModel):
                 return (None)
             file = {'fp': response.content}
             monitor = self.init_BeautifulSoup(**file)
-            header = monitor.find('header', class_='Nd')
+            # header = monitor.find('header', class_='Nd')
+            header = monitor.find('header', class_='Yd')
             active = header.find('a', class_='isActive')
-            active = active.find('span', class_='Pd')
+            # active = active.find('span', class_='Pd')
+            active = active.find('span', class_='ae')
             active = active.text
-            cen_content = monitor.find('div',  class_='ea', id='content-center')
-            live_games = cen_content.find('div', class_="na")
-            lt = live_games.find_all('div', class_=re.compile('lb'))
+            # cen_content = monitor.find('div',  class_='ea', id='content-center')
+            cen_content = monitor.find('div',  class_='ha', id='content-center')
+            # live_games = cen_content.find('div', class_="na")
+            live_games = cen_content.find('div', class_="Aa")
+            # lt = live_games.find_all('div', class_=re.compile('lb'))
+            lt = live_games.find_all('div', class_=re.compile('Wa'))
             for div in lt:
                 spans = div.find_all('span')
                 try:
@@ -909,17 +952,23 @@ class WebPageMonitor(BaseModel):
                 lt_details[name]['live_lt'] = {}
                 i = 1
                 for sib in div.next_siblings:
-                    if sib.get('class')[0] == 'pa':
+                    # if sib.get('class')[0] == 'pa':
+                    if sib.get('class')[0] == 'Ca':
                         continue
-                    if sib.get('class')[0] == 'lb':
+                    # if sib.get('class')[0] == 'lb':
+                    if sib.get('class')[0] == 'Wa':
                         # new lt
                         break
                     else:
-                        time = sib.find('span', class_=re.compile('ch Yg')).text
-                        ht = sib.find('div', class_='Qf')
+                        # time = sib.find('span', class_=re.compile('ch Yg')).text
+                        time = sib.find('span', class_=re.compile('sg og'))
+                        time = time.text
+                        # ht = sib.find('div', class_=re.compile('Qf'))
+                        ht = sib.find('div', class_=re.compile('uf'))
                         home = ht.text
                         away = ht.next_sibling.text
-                        hsas = sib.find('div', class_=re.compile('Mf Nf'))
+                        # hsas = sib.find('div', class_=re.compile('Mf Nf'))
+                        hsas = sib.find('div', class_=re.compile('qf rf'))
                         home_score = ''
                         away_score = ''
                         try:
@@ -927,7 +976,8 @@ class WebPageMonitor(BaseModel):
                         except Exception as e:
                             continue
                         away_score += hsas.contents[1].text
-                        bt_score = sib.find('div', class_='Kf')
+                        # bt_score = sib.find('div', class_='Kf')
+                        bt_score = sib.find('div', class_=re.compile('of'))
                         for score in bt_score.contents[0]:
                             home_score += score.text
                         for score in bt_score.contents[1]:
@@ -957,8 +1007,8 @@ class WebPageMonitor(BaseModel):
             print("Offline hockey gemas")
         elif (arg == 'True'):
             url = "https://www.livescores.com/hockey/?tz=-7"
+            # url = "https://www.livescores.com/hockey/2024-07-25/?tz=-7"
             lt_details = {}
-            # response = requests.get(url)
             try:
                 response = requests.get(url)
             except Exception as e:
@@ -966,13 +1016,18 @@ class WebPageMonitor(BaseModel):
                 return (None)
             file = {'fp': response.content}
             monitor = self.init_BeautifulSoup(**file)
-            header = monitor.find('header', class_='Nd')
+            # header = monitor.find('header', class_='Nd')
+            header = monitor.find('header', class_='Yd')
             active = header.find('a', class_='isActive')
-            active = active.find('span', class_='Pd')
+            # active = active.find('span', class_='Pd')
+            active = active.find('span', class_='ae')
             active = active.text
-            cen_content = monitor.find('div',  class_='ea', id='content-center')
-            live_games = cen_content.find('div', class_="na")
-            lt = live_games.find_all('div', class_=re.compile('lb'))
+            # cen_content = monitor.find('div',  class_='ea', id='content-center')
+            cen_content = monitor.find('div',  class_='ha', id='content-center')
+            # live_games = cen_content.find('div', class_="na")
+            live_games = cen_content.find('div', class_="Aa")
+            # lt = live_games.find_all('div', class_=re.compile('lb'))
+            lt = live_games.find_all('div', class_=re.compile('Wa'))
             for div in lt:
                 spans = div.find_all('span')
                 try:
@@ -986,25 +1041,32 @@ class WebPageMonitor(BaseModel):
                 lt_details[name]['live_lt'] = {}
                 i = 1
                 for sib in div.next_siblings:
-                    if sib.get('class')[0] == 'pa':
+                    # if sib.get('class')[0] == 'pa':
+                    if sib.get('class')[0] == 'Ca':
                         continue
-                    if sib.get('class')[0] == 'lb':
+                    # if sib.get('class')[0] == 'lb':
+                    if sib.get('class')[0] == 'Wa':
                         # new lt
                         break
                     else:
-                        time = sib.find('span', class_=re.compile('ch Yg')).text
-                        ht = sib.find('div', class_='Qf')
+                        # time = sib.find('span', class_=re.compile('ch Yg')).text
+                        time = sib.find('span', class_=re.compile('sg og'))
+                        time = time.text
+                        # ht = sib.find('div', class_='Qf')
+                        ht = sib.find('div', class_=re.compile('uf'))
                         home = ht.text
                         away = ht.next_sibling.text
                         home_score = ''
                         away_score = ''
-                        hsas = sib.find('div', class_=re.compile('Mf Nf'))
+                        # hsas = sib.find('div', class_=re.compile('Mf Nf'))
+                        hsas = sib.find('div', class_=re.compile('qf rf'))
                         try:
                             home_score += hsas.contents[0].text
                         except Exception as e:
                             continue
                         away_score += hsas.contents[1].text
-                        bt_score = sib.find('div', class_='Kf')
+                        # bt_score = sib.find('div', class_='Kf')
+                        bt_score = sib.find('div', class_=re.compile('of'))
                         for score in bt_score.contents[0]:
                             home_score += score.text
                         for score in bt_score.contents[1]:
@@ -1028,8 +1090,8 @@ class WebPageMonitor(BaseModel):
             print("Offline hockey")
         elif (arg == "True"):
             url = "https://www.livescores.com/hockey/live/?tz=-7"
+            # url = "https://www.livescores.com/hockey/2024-07-25/?tz=-7"
             lt_details = {}
-            # response = requests.get(url)
             try:
                 response = requests.get(url)
             except Exception as e:
@@ -1037,13 +1099,18 @@ class WebPageMonitor(BaseModel):
                 return (None)
             file = {'fp': response.content}
             monitor = self.init_BeautifulSoup(**file)
-            header = monitor.find('header', class_='Nd')
+            # header = monitor.find('header', class_='Nd')
+            header = monitor.find('header', class_='Yd')
             active = header.find('a', class_='isActive')
-            active = active.find('span', class_='Pd')
+            # active = active.find('span', class_='Pd')
+            active = active.find('span', class_='ae')
             active = active.text
-            cen_content = monitor.find('div',  class_='ea', id='content-center')
-            live_games = cen_content.find('div', class_="na")
-            lt = live_games.find_all('div', class_=re.compile('lb'))
+            # cen_content = monitor.find('div',  class_='ea', id='content-center')
+            cen_content = monitor.find('div',  class_='ha', id='content-center')
+            # live_games = cen_content.find('div', class_="na")
+            live_games = cen_content.find('div', class_="Aa")
+            # lt = live_games.find_all('div', class_=re.compile('lb'))
+            lt = live_games.find_all('div', class_=re.compile('Wa'))
             for div in lt:
                 spans = div.find_all('span')
                 try:
@@ -1057,25 +1124,32 @@ class WebPageMonitor(BaseModel):
                 lt_details[name]['live_lt'] = {}
                 i = 1
                 for sib in div.next_siblings:
-                    if sib.get('class')[0] == 'pa':
+                    # if sib.get('class')[0] == 'pa':
+                    if sib.get('class')[0] == 'Ca':
                         continue
-                    if sib.get('class')[0] == 'lb':
+                    # if sib.get('class')[0] == 'lb':
+                    if sib.get('class')[0] == 'Wa':
                         # new lt
                         break
                     else:
-                        time = sib.find('span', class_=re.compile('ch Yg')).text
-                        ht = sib.find('div', class_='Qf')
+                        # time = sib.find('span', class_=re.compile('ch Yg')).text
+                        time = sib.find('span', class_=re.compile('sg og'))
+                        time = time.text
+                        # ht = sib.find('div', class_='Qf')
+                        ht = sib.find('div', class_=re.compile('uf'))
                         home = ht.text
                         away = ht.next_sibling.text
                         home_score = ''
                         away_score = ''
-                        hsas = sib.find('div', class_=re.compile('Mf Nf'))
+                        # hsas = sib.find('div', class_=re.compile('Mf Nf'))
+                        hsas = sib.find('div', class_=re.compile('qf rf'))
                         try:
                             home_score += hsas.contents[0].text
                         except Exception as e:
                             continue
                         away_score += hsas.contents[1].text
-                        bt_score = sib.find('div', class_='Kf')
+                        # bt_score = sib.find('div', class_='Kf')
+                        bt_score = sib.find('div', class_=re.compile('of'))
                         for score in bt_score.contents[0]:
                             home_score += score.text
                         for score in bt_score.contents[1]:
@@ -1108,13 +1182,18 @@ class WebPageMonitor(BaseModel):
                 return (None)
             file = {'fp': response.content}
             monitor = self.init_BeautifulSoup(**file)
-            header = monitor.find('header', class_='Nd')
+            # header = monitor.find('header', class_='Nd')
+            header = monitor.find('header', class_='Yd')
             active = header.find('a', class_='isActive')
-            active = active.find('span', class_='Pd')
+            # active = active.find('span', class_='Pd')
+            active = active.find('span', class_='ae')
             active = active.text
-            cen_content = monitor.find('div',  class_='ea', id='content-center')
-            live_games = cen_content.find('div', class_="na")
-            lt = live_games.find_all('div', class_=re.compile('lb'))
+            # cen_content = monitor.find('div',  class_='ea', id='content-center')
+            cen_content = monitor.find('div',  class_='ha', id='content-center')
+            # live_games = cen_content.find('div', class_="na")
+            live_games = cen_content.find('div', class_="Aa")
+            # lt = live_games.find_all('div', class_=re.compile('lb'))
+            lt = live_games.find_all('div', class_=re.compile('Wa'))
             for div in lt:
                 spans = div.find_all('span')
                 try:
@@ -1128,29 +1207,36 @@ class WebPageMonitor(BaseModel):
                 lt_details[name]['live_lt'] = {}
                 i = 1
                 for sib in div.next_siblings:
-                    if sib.get('class')[0] == 'pa':
+                    # if sib.get('class')[0] == 'pa':
+                    if sib.get('class')[0] == 'Ca':
                         continue
-                    if sib.get('class')[0] == 'lb':
+                    # if sib.get('class')[0] == 'lb':
+                    if sib.get('class')[0] == 'Wa':
                         # new lt
                         break
                     else:
                         try:
-                            time = sib.find('span', class_=re.compile('ch Yg')).text
+                            # time = sib.find('span', class_=re.compile('ch Yg')).text
+                            time = sib.find('span', class_=re.compile('sg og'))
+                            time = time.text
                         except Exception as e:
                             time = '-'
-                        bt = sib.find('div', class_=re.compile('If Jf'))
-                        tennis_ball = bt.find('div', class_=re.compile('Gf'))
-                        try:
-                            server = tennis_ball.next_sibling.text
-                        except Exception as e:
-                            server = '-'
-                        # print("You're yet to work on tennis server line 363")
-                        # use to delete the ball tag from the html
-                        try:
-                            tennis_ball.decompose()
-                        except Exception as e:
-                            pass
+                        # bt = sib.find('div', class_=re.compile('If Jf'))
+                        bt = sib.find('div', class_=re.compile('mf'))
+
+                        # tennis_ball = bt.find('div', class_=re.compile('Gf'))
+                        # try:
+                        #     server = tennis_ball.next_sibling.text
+                        # except Exception as e:
+                        #     server = '-'
+                        # # print("You're yet to work on tennis server line 363")
+                        # # use to delete the ball tag from the html
+                        # try:
+                        #     tennis_ball.decompose()
+                        # except Exception as e:
+                        #     pass
                         # print(server)
+
                         home = ''
                         away = ''
                         team1 = bt.contents[0]
@@ -1176,7 +1262,8 @@ class WebPageMonitor(BaseModel):
                             ap2 = team2.contents[1].text
                             away = ap1 + ' || ' + ap2
                         # to get scores
-                        hsas = sib.find('div', class_=re.compile('Kf Jf'))
+                        # hsas = sib.find('div', class_=re.compile('Kf Jf'))
+                        hsas = sib.find('div', class_=re.compile('of'))
                         home_score = ''
                         away_score = ''
                         hsc = hsas.contents[0]
@@ -1236,13 +1323,18 @@ class WebPageMonitor(BaseModel):
                 return (None)
             file = {'fp': response.content}
             monitor = self.init_BeautifulSoup(**file)
-            header = monitor.find('header', class_='Nd')
+            # header = monitor.find('header', class_='Nd')
+            header = monitor.find('header', class_='Yd')
             active = header.find('a', class_='isActive')
-            active = active.find('span', class_='Pd')
+            # active = active.find('span', class_='Pd')
+            active = active.find('span', class_='ae')
             active = active.text
-            cen_content = monitor.find('div',  class_='ea', id='content-center')
-            live_games = cen_content.find('div', class_="na")
-            lt = live_games.find_all('div', class_=re.compile('lb'))
+            # cen_content = monitor.find('div',  class_='ea', id='content-center')
+            cen_content = monitor.find('div',  class_='ha', id='content-center')
+            # live_games = cen_content.find('div', class_="na")
+            live_games = cen_content.find('div', class_="Aa")
+            # lt = live_games.find_all('div', class_=re.compile('lb'))
+            lt = live_games.find_all('div', class_=re.compile('Wa'))
             for div in lt:
                 spans = div.find_all('span')
                 try:
@@ -1256,30 +1348,38 @@ class WebPageMonitor(BaseModel):
                 lt_details[name]['live_lt'] = {}
                 i = 1
                 for sib in div.next_siblings:
-                    if sib.get('class')[0] == 'pa':
+                    # if sib.get('class')[0] == 'pa':
+                    if sib.get('class')[0] == 'Ca':
                         continue
-                    if sib.get('class')[0] == 'lb':
+                    # if sib.get('class')[0] == 'lb':
+                    if sib.get('class')[0] == 'Wa':
                         # new lt
                         break
                     else:
                         try:
-                            time = sib.find('span', class_=re.compile('ch Yg')).text
+                            # time = sib.find('span', class_=re.compile('ch Yg')).text
+                            time = sib.find('span', class_=re.compile('sg og'))
+                            time = time.text
                         except Exception as e:
                             time = '-'
-                        bt = sib.find('div', class_=re.compile('If Jf'))
-                        tennis_ball = bt.find('div', class_=re.compile('Gf'))
-                        try:
-                            server = tennis_ball.next_sibling.text
-                        except Exception as e:
-                            server = '-'
-                        # print(server)
-                        # print("You're yet to work on tennis server line 363")
-                        # use to delete the ball tag from the html
-                        try:
-                            tennis_ball.decompose()
-                        except Exception as e:
-                            pass
-                        # print(server)
+                        # bt = sib.find('div', class_=re.compile('If Jf'))
+                        bt = sib.find('div', class_=re.compile('mf'))
+
+                        # tennis_ball = bt.find('div', class_=re.compile('Gf'))
+                        # try:
+                        #     server = tennis_ball.next_sibling.text
+                        # except Exception as e:
+                        #     server = '-'
+                        # # print(server)
+                        # # print("You're yet to work on tennis server line 363")
+                        # # use to delete the ball tag from the html
+                        # try:
+                        #     tennis_ball.decompose()
+                        # except Exception as e:
+                        #     pass
+                        # # print(server)
+                        server = '-'
+
                         home = ''
                         away = ''
                         team1 = bt.contents[0]
@@ -1319,7 +1419,8 @@ class WebPageMonitor(BaseModel):
                                 ap1 = '* ' + ap1
                             away = ap1 + ' || ' + ap2
                         # to get scores
-                        hsas = sib.find('div', class_=re.compile('Kf Jf'))
+                        # hsas = sib.find('div', class_=re.compile('Kf Jf'))
+                        hsas = sib.find('div', class_=re.compile('of'))
                         home_score = ''
                         away_score = ''
                         hsc = hsas.contents[0]
@@ -1390,13 +1491,18 @@ class WebPageMonitor(BaseModel):
                 return (None)
             file = {'fp': response.content}
             monitor = self.init_BeautifulSoup(**file)
-            header = monitor.find('header', class_='Nd')
+            # header = monitor.find('header', class_='Nd')
+            header = monitor.find('header', class_='Yd')
             active = header.find('a', class_='isActive')
-            active = active.find('span', class_='Pd')
+            # active = active.find('span', class_='Pd')
+            active = active.find('span', class_='ae')
             active = active.text
-            cen_content = monitor.find('div',  class_='ea', id='content-center')
-            live_games = cen_content.find('div', class_="na")
-            lt = live_games.find_all('div', class_=re.compile('lb'))
+            # cen_content = monitor.find('div',  class_='ea', id='content-center')
+            cen_content = monitor.find('div',  class_='ha', id='content-center')
+            # live_games = cen_content.find('div', class_="na")
+            live_games = cen_content.find('div', class_="Aa")
+            # lt = live_games.find_all('div', class_=re.compile('lb'))
+            lt = live_games.find_all('div', class_=re.compile('Wa'))
             for div in lt:
                 spans = div.find_all('span')
                 try:
@@ -1410,20 +1516,30 @@ class WebPageMonitor(BaseModel):
                 lt_details[name]['live_lt'] = {}
                 i = 1
                 for sib in div.next_siblings:
-                    if sib.get('class')[0] == 'pa':
+                    # if sib.get('class')[0] == 'pa':
+                    if sib.get('class')[0] == 'Ca':
                         continue
-                    if sib.get('class')[0] == 'lb':
+                    # if sib.get('class')[0] == 'lb':
+                    if sib.get('class')[0] == 'Wa':
                         # new lt
                         break
                     else:
-                        time = sib.find('span', class_='Mh').text
-                        bt = sib.find('div', class_='Nh')
+                        # time = sib.find('span', class_='Mh').text
+                        time = sib.find('span', class_=re.compile('Ih')).text
+                        # bt = sib.find('div', class_='Nh')
+                        bt = sib.find('div', class_=re.compile('Jh'))
                         home = bt.contents[0].text
                         away = bt.contents[1].text
-                        h_s = sib.find('div', class_='Qh')
-                        home_score = h_s.find('div', class_='Sh').text
-                        a_s = sib.find('div', class_='Ph')
-                        away_score = a_s.find('div', class_='Sh').text
+                        # print(bt)
+                        # exit()
+                        # h_s = sib.find('div', class_='Qh')
+                        h_s = sib.find('div', class_=re.compile('Mh'))
+                        # home_score = h_s.find('div', class_='Sh').text
+                        home_score = h_s.find('div', class_=re.compile('Oh')).text
+                        # a_s = sib.find('div', class_='Ph')
+                        a_s = sib.find('div', class_=re.compile('Lh'))
+                        # away_score = a_s.find('div', class_='Sh').text
+                        away_score = a_s.find('div', class_=re.compile('Oh')).text
                         lt_details[name]['live_lt'][i] = {}
                         lt_details[name]['live_lt'][i]['time'] = time
                         lt_details[name]['live_lt'][i]['home'] = home
@@ -1452,13 +1568,18 @@ class WebPageMonitor(BaseModel):
                 return (None)
             file = {'fp': response.content}
             monitor = self.init_BeautifulSoup(**file)
-            header = monitor.find('header', class_='Nd')
+            # header = monitor.find('header', class_='Nd')
+            header = monitor.find('header', class_='Yd')
             active = header.find('a', class_='isActive')
-            active = active.find('span', class_='Pd')
+            # active = active.find('span', class_='Pd')
+            active = active.find('span', class_='ae')
             active = active.text
-            cen_content = monitor.find('div',  class_='ea', id='content-center')
-            live_games = cen_content.find('div', class_="na")
-            lt = live_games.find_all('div', class_=re.compile('lb'))
+            # cen_content = monitor.find('div',  class_='ea', id='content-center')
+            cen_content = monitor.find('div',  class_='ha', id='content-center')
+            # live_games = cen_content.find('div', class_="na")
+            live_games = cen_content.find('div', class_="Aa")
+            # lt = live_games.find_all('div', class_=re.compile('lb'))
+            lt = live_games.find_all('div', class_=re.compile('Wa'))
             for div in lt:
                 spans = div.find_all('span')
                 try:
@@ -1472,20 +1593,28 @@ class WebPageMonitor(BaseModel):
                 lt_details[name]['live_lt'] = {}
                 i = 1
                 for sib in div.next_siblings:
-                    if sib.get('class')[0] == 'pa':
+                    # if sib.get('class')[0] == 'pa':
+                    if sib.get('class')[0] == 'Ca':
                         continue
-                    if sib.get('class')[0] == 'lb':
+                    # if sib.get('class')[0] == 'lb':
+                    if sib.get('class')[0] == 'Wa':
                         # new lt
                         break
                     else:
-                        time = sib.find('span', class_='Mh').text
-                        bt = sib.find('div', class_='Nh')
+                        # time = sib.find('span', class_='Mh').text
+                        time = sib.find('span', class_=re.compile('Ih')).text
+                        # bt = sib.find('div', class_='Nh')
+                        bt = sib.find('div', class_=re.compile('Jh'))
                         home = bt.contents[0].text
                         away = bt.contents[1].text
-                        h_s = sib.find('div', class_='Qh')
-                        home_score = h_s.find('div', class_='Sh').text
-                        a_s = sib.find('div', class_='Ph')
-                        away_score = a_s.find('div', class_='Sh').text
+                        # h_s = sib.find('div', class_='Qh')
+                        h_s = sib.find('div', class_=re.compile('Mh'))
+                        # home_score = h_s.find('div', class_='Sh').text
+                        home_score = h_s.find('div', class_=re.compile('Oh')).text
+                        # a_s = sib.find('div', class_='Ph')
+                        a_s = sib.find('div', class_=re.compile('Lh'))
+                        # away_score = a_s.find('div', class_='Sh').text
+                        away_score = a_s.find('div', class_=re.compile('Oh')).text
                         lt_details[name]['live_lt'][i] = {}
                         lt_details[name]['live_lt'][i]['time'] = time
                         lt_details[name]['live_lt'][i]['home'] = home
