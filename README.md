@@ -16,18 +16,18 @@ A web-stack portfolio project that uses beautifulSoup4 to webscrap (extract) dat
 
 If you haven't already cloned the repository, you can do so with the following commands:
 
-    ```
-    $ git clone https://github.com/ZeusGolohor/folio.git
-    $ cd folio
-    ```
+```
+$ git clone https://github.com/ZeusGolohor/folio.git
+$ cd folio
+```
 
 #### Set Up Virtual Environment
 
 create a virtual environment named venv (or any other name you prefer):
 
-    ```
-    $ python3 -m venv venv
-    ```
+```
+$ python3 -m venv venv
+```
 
 #### Activate Virtual Environment
 

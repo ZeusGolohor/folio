@@ -53,7 +53,6 @@ def logout():
     A method to logout a user.
     """
     session_id = request.form.get('session_id')
-    print(session_id)
     if (session_id is None):
         abort(403)
     user = AUTH.get_user_from_session_id(session_id)
@@ -63,7 +62,6 @@ def logout():
         AUTH.destroy_session(user.id)
     res = jsonify({})
     res.set_cookie('session_id', '', expires=0)
-    # return redirect("/")
     return jsonify({"message": "User logged out"}), 200
 
 @app_views.route('/profile', methods=['GET'], strict_slashes=False)
