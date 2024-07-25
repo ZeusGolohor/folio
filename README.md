@@ -358,7 +358,7 @@ To use the web API, follow these steps:
        }
      ```
 
-3. basketball_today: \*
+3. basketball_today:
 
    - Description: This endpoint gets information for basketball games for the day.
    - Endpoint URL:
@@ -395,31 +395,32 @@ To use the web API, follow these steps:
      ```
        {
            "data": {
-               "Club Friendlies - Club Friendlies 2024": {
-               "date": "July 22",
-               "live_lt": {
-                   "1": {
-                   "away": "Adelaide United",
-                   "away_score": "8",
-                   "home": "Cumberland United",
-                   "home_score": "1",
-                   "time": "FT"
-                   },
-                   "2": {
-                   "away": "Sporting CP",
-                   "away_score": "",
-                   "home": "Farense",
-                   "home_score": "",
-                   "time": "Canc."
-                   },
-               }
-               ...
-               }
+               "EuroBasket U18 - Division C: Group A": {
+                  "date": "July 25",
+                  "live_lt": {
+                    "1": {
+                      "away": "San Marino U18",
+                      "away_score": [],
+                      "home": "Albania U18",
+                      "home_score": [],
+                      "time": "09:30"
+                    },
+                    "2": {
+                      "away": "Luxembourg U18",
+                      "away_score": [],
+                      "home": "Gibraltar U18",
+                      "home_score": [],
+                      "time": "12:00"
+                    }
+                  },
+                  "name": "EuroBasket U18 - Division C: Group A"
+                },
+            ...
            }
-       }
+        }
      ```
 
-4. basketball_live: \*
+4. basketball_live:
 
    - Description: This endpoint gets information for basketball live games for the day.
    - Endpoint URL:
@@ -456,31 +457,32 @@ To use the web API, follow these steps:
      ```
        {
            "data": {
-               "Club Friendlies - Club Friendlies 2024": {
-               "date": "July 22",
-               "live_lt": {
-                   "1": {
-                   "away": "Adelaide United",
-                   "away_score": "8",
-                   "home": "Cumberland United",
-                   "home_score": "1",
-                   "time": "FT"
-                   },
-                   "2": {
-                   "away": "Sporting CP",
-                   "away_score": "",
-                   "home": "Farense",
-                   "home_score": "",
-                   "time": "Canc."
-                   },
-               }
-               ...
-               }
+               "EuroBasket U18 - Division C: Group A": {
+                  "date": "July 25",
+                  "live_lt": {
+                    "1": {
+                      "away": "San Marino U18",
+                      "away_score": [],
+                      "home": "Albania U18",
+                      "home_score": [],
+                      "time": "09:30"
+                    },
+                    "2": {
+                      "away": "Luxembourg U18",
+                      "away_score": [],
+                      "home": "Gibraltar U18",
+                      "home_score": [],
+                      "time": "12:00"
+                    }
+                  },
+                  "name": "EuroBasket U18 - Division C: Group A"
+                },
+            ...
            }
-       }
+        }
      ```
 
-5. hockey_today: \*
+5. hockey_today:
 
    - Description: This endpoint gets information for hockey games for the day.
    - Endpoint URL:
@@ -515,33 +517,33 @@ To use the web API, follow these steps:
    - Example: (JSON Schema):
 
      ```
-       {
-           "data": {
-               "Club Friendlies - Club Friendlies 2024": {
-               "date": "July 22",
-               "live_lt": {
-                   "1": {
-                   "away": "Adelaide United",
-                   "away_score": "8",
-                   "home": "Cumberland United",
-                   "home_score": "1",
-                   "time": "FT"
-                   },
-                   "2": {
-                   "away": "Sporting CP",
-                   "away_score": "",
-                   "home": "Farense",
-                   "home_score": "",
-                   "time": "Canc."
-                   },
-               }
-               ...
-               }
-           }
-       }
+      {
+        "data": {
+          "International - Club Friendlies": {
+            "date": "July 24",
+            "live_lt": {
+              "1": {
+                "away": "Krylya Sovetov",
+                "away_score": "()",
+                "home": "SKA-Junior",
+                "home_score": "()",
+                "time": "03:00"
+              },
+              "2": {
+                "away": "Chaika",
+                "away_score": "()",
+                "home": "MHC Dynamo",
+                "home_score": "()",
+                "time": "08:00"
+              }
+            },
+            "name": "International - Club Friendlies"
+          }
+        }
+      }
      ```
 
-6. hockey_live: \*
+6. hockey_live:
 
    - Description: This endpoint gets information for hockey live games for the day.
    - Endpoint URL:
@@ -576,30 +578,30 @@ To use the web API, follow these steps:
    - Example: (JSON Schema):
 
      ```
-       {
-           "data": {
-               "Club Friendlies - Club Friendlies 2024": {
-               "date": "July 22",
-               "live_lt": {
-                   "1": {
-                   "away": "Adelaide United",
-                   "away_score": "8",
-                   "home": "Cumberland United",
-                   "home_score": "1",
-                   "time": "FT"
-                   },
-                   "2": {
-                   "away": "Sporting CP",
-                   "away_score": "",
-                   "home": "Farense",
-                   "home_score": "",
-                   "time": "Canc."
-                   },
-               }
-               ...
-               }
-           }
-       }
+      {
+        "data": {
+          "International - Club Friendlies": {
+            "date": "July 24",
+            "live_lt": {
+              "1": {
+                "away": "Krylya Sovetov",
+                "away_score": "()",
+                "home": "SKA-Junior",
+                "home_score": "()",
+                "time": "03:00"
+              },
+              "2": {
+                "away": "Chaika",
+                "away_score": "()",
+                "home": "MHC Dynamo",
+                "home_score": "()",
+                "time": "08:00"
+              }
+            },
+            "name": "International - Club Friendlies"
+          }
+        }
+      }
      ```
 
 7. tennis_today:
@@ -663,7 +665,7 @@ To use the web API, follow these steps:
        }
      ```
 
-8. tennis_live: \*
+8. tennis_live:
 
    - Description: This endpoint gets information for tennis live games for the day.
    - Endpoint URL:
@@ -724,7 +726,7 @@ To use the web API, follow these steps:
        }
      ```
 
-9. cricket_today: \*
+9. cricket_today:
 
    - Description: This endpoint gets information for cricket games for the day.
    - Endpoint URL:
@@ -761,31 +763,25 @@ To use the web API, follow these steps:
      ```
        {
            "data": {
-               "ATP 250 - Atlanta Open": {
-                "date": "July 24",
-                "live_lt": {
+                "Canada - Global T20 Canada": {
+                  "date": "July 25",
+                  "live_lt": {
                     "1": {
-                    "away": "Jackson Withrow || Nathaniel Lammons",
-                    "away_score": "",
-                    "home": "Constant Lestienne || Juncheng Shang",
-                    "home_score": "",
-                    "time": "Canc."
-                    },
-                    "2": {
-                    "away": "Jackson Withrow || Nathaniel Lammons",
-                    "away_score": "",
-                    "home": "Niki Kaliyanda Poonacha || Rithvik Bollipalli",
-                    "home_score": "",
-                    "time": "08:00"
-                    },
-               }
+                      "away": "Toronto Nationals",
+                      "away_score": "",
+                      "home": "Vancouver Knights",
+                      "home_score": "",
+                      "time": "13:00"
+                    }
+                  },
+                  "name": "Canada - Global T20 Canada"
+                },
                ...
-               }
-           }
-       }
+          }
+      }
      ```
 
-10. cricket_live: \*
+10. cricket_live:
 
 - Description: This endpoint gets information for cricket live games for the day.
 - Endpoint URL:
@@ -820,30 +816,24 @@ To use the web API, follow these steps:
 - Example: (JSON Schema):
 
   ```
-    {
-        "data": {
-            "ATP 250 - Atlanta Open": {
-             "date": "July 24",
-             "live_lt": {
-                 "1": {
-                 "away": "Jackson Withrow || Nathaniel Lammons",
-                 "away_score": "",
-                 "home": "Constant Lestienne || Juncheng Shang",
-                 "home_score": "",
-                 "time": "Canc."
-                 },
-                 "2": {
-                 "away": "Jackson Withrow || Nathaniel Lammons",
-                 "away_score": "",
-                 "home": "Niki Kaliyanda Poonacha || Rithvik Bollipalli",
-                 "home_score": "",
-                 "time": "08:00"
-                 },
-            }
-            ...
-            }
-        }
-    }
+       {
+           "data": {
+                "Canada - Global T20 Canada": {
+                  "date": "July 25",
+                  "live_lt": {
+                    "1": {
+                      "away": "Toronto Nationals",
+                      "away_score": "",
+                      "home": "Vancouver Knights",
+                      "home_score": "",
+                      "time": "13:00"
+                    }
+                  },
+                  "name": "Canada - Global T20 Canada"
+                },
+               ...
+          }
+      }
   ```
 
 11. users:
