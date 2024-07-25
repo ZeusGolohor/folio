@@ -47,9 +47,9 @@ $ python3 -m venv venv
 
 Ensure your virtual environment is activated, then install the required packages from requirements.txt:
 
-    ```
-    $ pip install -r requirements.txt
-    ```
+```
+$ pip install -r requirements.txt
+```
 
 This command will install the following packages (listed in your requirements.txt file):
 
